@@ -1,0 +1,481 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>官方訊息 App｜功能情境 2026-10-13</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@600;900&family=Noto+Sans+TC:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --paper:#f3eee4; --ink:#1c2220; --muted:#6b675f; --line:#d6ccba;
+  --teal:#0d5c57; --teal-soft:#dfece9; --seal:#c3352b;
+  --teams:#5b5fc7; --teams-soft:#e8ebfa; --teams-bg:#f5f5f5; --good:#107c10;
+  --serif:"Noto Serif TC","Source Han Serif TC","PMingLiU",serif;
+  --sans:"Noto Sans TC","Microsoft JhengHei UI","Microsoft JhengHei",sans-serif;
+  --mono:"Cascadia Mono","Consolas",monospace;
+  --ui:"Segoe UI","Microsoft JhengHei UI","Microsoft JhengHei",sans-serif;
+}
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+html{scroll-behavior:smooth}
+body{
+  margin:0; color:var(--ink); font-family:var(--sans); line-height:1.6;
+  background:
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.07'/%3E%3C/svg%3E"),
+    radial-gradient(1200px 600px at 85% -10%, #fbf8f1 0%, transparent 60%),
+    var(--paper);
+}
+.ruler{font-family:var(--mono); font-size:11px; color:#a39c8e; white-space:nowrap; overflow:hidden; letter-spacing:.06em; padding:10px 24px 0; user-select:none}
+main{max-width:1200px; margin:0 auto; padding:0 24px 80px}
+
+/* 印章 */
+.seal{display:inline-flex; align-items:center; justify-content:center; font-family:var(--serif); font-weight:900; font-size:12.5px; letter-spacing:.18em; padding:3px 7px 3px 10px; border:2px solid currentColor; border-radius:3px; color:var(--seal); transform:rotate(-3deg); filter:url(#rough); white-space:nowrap; line-height:1.3}
+.seal.fill{background:var(--seal); color:#fff6ee; border-color:var(--seal)}
+.seal.plan{color:var(--teal)}
+
+/* 封面 */
+.hero{display:grid; grid-template-columns:1.7fr .5fr; gap:48px; align-items:end; padding:56px 0 40px; border-bottom:2px solid var(--ink)}
+.hero h1{font-family:var(--serif); font-weight:900; font-size:clamp(40px,6vw,76px); line-height:1.05; margin:0; letter-spacing:.02em}
+.hero h1 small{display:block; font-size:.36em; font-weight:600; color:var(--teal); letter-spacing:.3em; margin-bottom:14px}
+.hero .meta{margin-top:18px; font-size:14px; color:var(--muted)}
+.hero .meta b{color:var(--ink)}
+.hero-stamp{justify-self:end}
+.hero-stamp .big{font-size:30px; padding:10px 14px 10px 20px; border-width:4px; transform:rotate(-8deg)}
+.legend{display:flex; flex-wrap:wrap; gap:14px 22px; align-items:center; margin:22px 0 0; font-size:13px; color:var(--muted)}
+.toc{display:grid; grid-template-columns:repeat(6,1fr); border-top:1px solid var(--line); margin-top:26px}
+.toc a{padding:12px 12px 4px; border-right:1px solid var(--line); color:var(--ink); text-decoration:none; font-size:13px; white-space:nowrap}
+.toc a:last-child{border-right:0}
+.toc a b{display:block; font-family:var(--serif); font-size:24px; line-height:1; color:var(--teal)}
+.toc a:hover b{color:var(--seal)}
+
+/* 圖版 */
+.plate{position:relative; margin:64px 0 0; padding:36px 36px 34px 92px; background:rgba(255,255,255,.5); border:1px solid var(--line); box-shadow:0 1px 0 #fff inset, 0 18px 40px -28px rgba(40,30,10,.35); opacity:0; transform:translateY(18px); animation:rise .7s cubic-bezier(.2,.7,.2,1) forwards}
+.plate:nth-of-type(2){animation-delay:.08s}.plate:nth-of-type(3){animation-delay:.16s}.plate:nth-of-type(4){animation-delay:.24s}
+@keyframes rise{to{opacity:1; transform:none}}
+.fig{position:absolute; left:26px; top:36px; writing-mode:vertical-rl; font-family:var(--serif); font-weight:900; font-size:15px; letter-spacing:.35em; color:var(--teal)}
+.fig::after{content:""; display:block; width:2px; height:60px; background:var(--teal); margin:12px auto 0}
+.plate-head{display:flex; align-items:center; gap:14px; flex-wrap:wrap}
+.plate h2{font-family:var(--serif); font-weight:900; font-size:28px; margin:0; letter-spacing:.04em}
+.cap{margin:6px 0 24px; color:var(--muted); font-size:15px}
+.cap b{color:var(--ink)}
+
+/* 系統一張圖 */
+.map{display:grid; grid-template-columns:1fr 70px 1.1fr 70px 1fr; align-items:center}
+.node{background:#fff; border:1.5px solid var(--ink); padding:14px 16px; position:relative}
+.node h3{margin:0 0 4px; font-family:var(--serif); font-size:18px}
+.node p{margin:0; font-size:13px; color:var(--muted)}
+.node.core{background:var(--teal); color:#f4efe6; border-color:var(--teal)}
+.node.core p{color:#cfe3df}
+.node .tag{position:absolute; top:-11px; right:10px}
+.node.future{border-style:dashed; border-color:var(--teal)}
+.arrow{height:2px; background:var(--ink); position:relative; margin:0 6px}
+.arrow::after{content:""; position:absolute; right:-1px; top:-5px; border:6px solid transparent; border-left:9px solid var(--ink); border-right:0}
+.stack{display:grid; gap:12px}
+.below{display:grid; grid-template-columns:1fr 1fr 1fr; gap:12px; margin-top:22px}
+.below .node{border-width:1px}
+
+/* Teams 模擬視窗 */
+.tw{font-family:var(--ui); background:var(--teams-bg); border:1px solid #e1dfdd; border-radius:10px; overflow:hidden; box-shadow:0 10px 24px -18px rgba(0,0,0,.45); position:relative; display:flex; flex-direction:column}
+.tw-bar{display:flex; align-items:center; gap:8px; height:34px; padding:0 12px; background:#ebebeb; border-bottom:1px solid #e1dfdd; font-size:12.5px; color:#424242}
+.tw-bar i{width:9px; height:9px; border-radius:50%; background:#c8c6c4; display:inline-block}
+.tw-bar b{margin-left:6px; color:var(--teams)}
+.tw-body{padding:14px; display:grid; gap:12px; min-height:150px; align-content:start; flex:1}
+.tw-foot{font-size:12px; color:#616161; padding:7px 12px; border-top:1px solid #e1dfdd; background:#fafafa; display:flex; justify-content:space-between; gap:8px}
+.stale{display:none; color:#a4262c; font-weight:600}
+.tw.is-stale .stale{display:inline}
+.msg{display:flex; gap:10px; align-items:flex-start}
+.av{flex:0 0 30px; height:30px; border-radius:50%; display:grid; place-items:center; color:#fff; font-size:12px; font-weight:700; background:var(--teal)}
+.who{font-size:11.5px; color:#616161; margin-bottom:4px}
+.ac{background:#fff; border:1px solid #e0e0e0; border-radius:6px; padding:12px 14px; width:min(330px,100%); transition:box-shadow .3s}
+.ac-tag{font-size:11px; font-weight:700; color:var(--teams); letter-spacing:.05em}
+.ac-unit{font-size:11.5px; color:#616161}
+.ac-title{font-size:15.5px; font-weight:700; margin:3px 0 2px; color:#242424}
+.ac-body{font-size:13px; color:#424242}
+.ac-actions{display:flex; flex-wrap:wrap; gap:6px; margin-top:10px}
+.ac-actions button{font:inherit; font-size:12.5px; padding:5px 11px; background:#fff; border:1px solid #d1d1d1; border-radius:4px; cursor:pointer; color:#242424}
+.ac-actions button:hover{border-color:var(--teams); color:var(--teams)}
+.ac-actions button:focus-visible{outline:2px solid var(--teams); outline-offset:1px}
+.ac-link{font-size:12.5px; color:var(--teams); margin-top:8px; display:inline-block}
+.ac-status{margin-top:10px; font-size:13px; font-weight:600; color:var(--good); border-top:1px dashed #e0e0e0; padding-top:8px}
+.ac.closed{box-shadow:0 0 0 2px #cfe8cf}
+.ac.thump{animation:thump .45s ease}
+@keyframes thump{30%{transform:scale(1.03)}}
+.ac-count{margin-top:8px; font-size:12.5px; color:#616161}
+.ac-count b{color:var(--teams)}
+.bubble{background:#fff; border:1px solid #e0e0e0; border-radius:6px; padding:8px 11px; font-size:13px; max-width:330px}
+.bubble.me{background:var(--teams-soft); border-color:#d5daf6; margin-left:auto}
+.quote{border-left:3px solid var(--teams); background:#f0f0f0; padding:5px 9px; font-size:12px; color:#424242; margin-bottom:6px}
+.thread{margin-left:40px; border-left:2px solid #e1dfdd; padding-left:10px; display:grid; gap:8px}
+.pop{animation:pop .4s ease}
+@keyframes pop{from{opacity:0; transform:translateY(6px)}}
+
+/* 情境版面 */
+.duo{display:grid; grid-template-columns:1fr 1fr; gap:22px}
+.ctrl{display:flex; flex-wrap:wrap; gap:10px; margin-top:18px; align-items:center}
+.btn{font:inherit; font-size:13.5px; padding:8px 14px; border:1.5px solid var(--ink); background:#fff; cursor:pointer; font-weight:500}
+.btn:hover{background:var(--ink); color:var(--paper)}
+.btn.ghost{border-color:var(--line); color:var(--muted)}
+.log{font-size:13.5px; color:var(--teal); font-weight:500; min-height:1.6em}
+.note{font-size:12.5px; color:var(--muted); margin-top:10px}
+
+/* 情境流程 */
+.flow{display:grid; grid-template-columns:repeat(4,1fr); gap:16px; counter-reset:s}
+.step{background:#fff; border:1px solid var(--line); padding:14px; position:relative}
+.step::before{counter-increment:s; content:counter(s); position:absolute; top:-14px; left:12px; width:28px; height:28px; border-radius:50%; background:var(--ink); color:var(--paper); display:grid; place-items:center; font-family:var(--serif); font-weight:900; font-size:14px}
+.step h4{margin:6px 0 10px; font-size:14.5px}
+.portal{font-family:var(--ui); font-size:12px; border:1px solid #cfd8d6; background:#fbfdfc}
+.portal .ph{background:var(--teal); color:#eef6f4; padding:5px 8px; font-weight:600}
+.portal .pr{padding:5px 8px; border-bottom:1px solid #e3ebe9; display:flex; justify-content:space-between; gap:8px}
+.portal .pr span{color:#5e6b69}
+.portal .pbtn{margin:7px 8px; display:inline-block; background:var(--teal); color:#fff; padding:3px 10px; border-radius:3px}
+.pill{display:inline-block; font-size:11px; padding:1px 7px; border-radius:10px; background:#fde7e5; color:#a4262c; font-weight:600}
+.pill.ok{background:#dff1df; color:var(--good)}
+.mini .ac{width:100%}
+.mini .tw-body{min-height:0; padding:10px}
+
+/* 分流 */
+.route{display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-top:16px}
+.route div{border:1.5px dashed var(--line); padding:10px 12px; font-size:13.5px; color:var(--muted); transition:all .3s}
+.route div b{display:block; color:var(--ink); font-size:14.5px}
+.route div.on{border-style:solid; border-color:var(--teal); background:var(--teal-soft); color:var(--teal)}
+
+/* 排程時間軸 */
+.tl{position:relative; display:grid; grid-template-columns:repeat(3,1fr); padding-top:30px}
+.tl::before{content:""; position:absolute; left:6%; right:6%; top:38px; height:3px; background:linear-gradient(90deg,var(--teal) 0 50%, var(--ink) 50% 100%)}
+.tl div{text-align:center; padding:0 10px; position:relative}
+.tl div::before{content:""; display:block; width:18px; height:18px; border-radius:50%; background:var(--paper); border:3px solid var(--teal); margin:0 auto 12px; position:relative; z-index:1}
+.tl div:nth-child(2)::before{border-color:var(--ink); background:var(--ink)}
+.tl div:nth-child(3)::before{border-color:var(--seal)}
+.tl b{display:block; font-family:var(--serif); font-size:18px}
+.tl span{font-size:13px; color:var(--muted)}
+
+footer{margin-top:56px; font-size:12px; color:var(--muted); display:flex; justify-content:space-between; flex-wrap:wrap; gap:8px}
+
+@media (max-width:980px){
+  .hero,.duo,.route{grid-template-columns:1fr}
+  .map{grid-template-columns:1fr; gap:12px}
+  .arrow{display:none}
+  .flow,.below,.toc{grid-template-columns:1fr 1fr}
+  .plate{padding:30px 20px 26px 56px}
+  .fig{left:14px}
+}
+@media (prefers-reduced-motion:reduce){*{animation:none!important; transition:none!important} .plate{opacity:1; transform:none}}
+@media print{
+  body{background:#fff}
+  .plate{opacity:1; transform:none; animation:none; box-shadow:none; break-inside:avoid; page-break-inside:avoid}
+  .ctrl{display:none}
+}
+</style>
+</head>
+<body>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <filter id="rough"><feTurbulence type="fractalNoise" baseFrequency=".9" numOctaves="1" result="t"/><feDisplacementMap in="SourceGraphic" in2="t" scale="1.6"/></filter>
+</svg>
+
+<div class="ruler" aria-hidden="true">---.5...10...15...20...25...30...35...40...45...50...55...60...65...70...75...80...85...90...95..100---.5...10...15...20...25...30...35...40...45...50</div>
+
+<main>
+  <header class="hero">
+    <div>
+      <h1><small>CSH TEAMS 官方訊息</small>功能情境</h1>
+      <div class="meta">2026-10-13　｜　<b>MVP 測試階段</b>，尚未上線　｜　圖 03、05 可點按模擬</div>
+      <nav class="toc" aria-label="圖版目錄">
+        <a href="#p1"><b>01</b>系統一張圖</a>
+        <a href="#p2"><b>02</b>公告與私訊</a>
+        <a href="#p3"><b>03</b>頻道單一回覆</a>
+        <a href="#p4"><b>04</b>頻道每人一次</a>
+        <a href="#p5"><b>05</b>私人公告回覆</a>
+        <a href="#p6"><b>06</b>單次排程</a>
+      </nav>
+      <div class="legend">
+        <span><span class="seal fill">真實驗收</span>　已在 Teams 實測（單人）</span>
+        <span><span class="seal plan">規劃</span>　規格已定案，尚未開發</span>
+      </div>
+    </div>
+    <div class="hero-stamp"><span class="seal big">待核</span></div>
+  </header>
+
+  <!-- 圖 01 -->
+  <section class="plate" id="p1" aria-labelledby="h1">
+    <span class="fig">圖 01</span>
+    <div class="plate-head"><h2 id="h1">系統一張圖</h2></div>
+    <p class="cap">Operator 在內網後台發公告，App 送到員工 Teams；回覆回到後台。</p>
+    <div class="map">
+      <div class="node"><h3>Operator</h3><p>內網後台・Windows 登入</p></div>
+      <div class="arrow"></div>
+      <div class="node core"><h3>官方訊息 App</h3><p>Teams Bot・背景發送・員工主檔每 5 分鐘同步</p></div>
+      <div class="arrow"></div>
+      <div class="stack">
+        <div class="node"><span class="tag seal fill">真實驗收</span><h3>員工 1:1</h3><p>私人公告・私訊</p></div>
+        <div class="node future"><span class="tag seal plan">規劃</span><h3>團隊頻道</h3><p>頻道公告・代表單位回覆</p></div>
+      </div>
+    </div>
+    <div class="below">
+      <div class="node"><h3>承辦收件匣</h3><p>私訊與需處理的回覆</p></div>
+      <div class="node future"><h3>公告詳情</h3><p>誰・哪個單位・回了什麼・何時</p></div>
+      <div class="node"><h3>員工主檔</h3><p>工作單位／細分單位（HealthTest）</p></div>
+    </div>
+  </section>
+
+  <!-- 圖 02 -->
+  <section class="plate" id="p2" aria-labelledby="h2">
+    <span class="fig">圖 02</span>
+    <div class="plate-head"><h2 id="h2">情境：公告 → 私訊 → 承辦回覆</h2><span class="seal fill">真實驗收</span></div>
+    <p class="cap">現有主流程，2026-09-17 已在真實 Teams 走過一輪。</p>
+    <div class="flow">
+      <div class="step">
+        <h4>Operator 發公告</h4>
+        <div class="portal">
+          <div class="ph">建立公告</div>
+          <div class="pr"><span>標題</span>10/15 消防演練</div>
+          <div class="pr"><span>對象</span>指定員工・王OO</div>
+          <span class="pbtn">送出</span>
+        </div>
+      </div>
+      <div class="step mini">
+        <h4>員工收到卡片</h4>
+        <div class="tw"><div class="tw-body">
+          <div class="ac"><div class="ac-tag">公告</div><div class="ac-title">10/15 消防演練</div><div class="ac-body">10:00 1F 大廳集合。</div><span class="ac-link">開啟文件</span></div>
+        </div></div>
+      </div>
+      <div class="step mini">
+        <h4>員工私訊提問</h4>
+        <div class="tw"><div class="tw-body">
+          <div class="bubble me">請問需要帶什麼？</div>
+        </div></div>
+      </div>
+      <div class="step">
+        <h4>收件匣接手回覆</h4>
+        <div class="portal">
+          <div class="ph">承辦收件匣</div>
+          <div class="pr"><span>王OO</span><span class="pill">待處理</span></div>
+          <div class="pr"><span>回覆</span>請攜帶識別證</div>
+          <div class="pr"><span>狀態</span><span class="pill ok">已結案</span></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 圖 03 -->
+  <section class="plate" id="p3" aria-labelledby="h3">
+    <span class="fig">圖 03</span>
+    <div class="plate-head"><h2 id="h3">情境：頻道公告「單一回覆」</h2><span class="seal plan">規劃</span></div>
+    <p class="cap">請點左右任一張卡片的按鈕：<b>先送出的人代表單位回覆</b>，卡片對所有人關閉；另一人的畫面若還沒更新，點了會收到引用提示。</p>
+    <div class="duo" id="single">
+      <div class="tw" data-pane="wang" data-name="王OO" data-unit="資訊室">
+        <div class="tw-bar"><i></i><i></i><i></i><b>資訊室</b> › 公告</div>
+        <div class="tw-body">
+          <div class="msg"><div class="av">官</div><div>
+            <div class="who">官方訊息 App　09:00</div>
+            <div class="ac"><div class="ac-tag">公告</div><div class="ac-unit">發文單位：人資室</div><div class="ac-title">請回報 11 月值班名單</div><div class="ac-body">10/20 前完成。</div>
+              <div class="ac-actions"><button>已完成</button><button>需延期</button><button>有疑問</button></div>
+              <div class="ac-status" hidden></div></div>
+          </div></div>
+          <div class="thread" hidden></div>
+        </div>
+        <div class="tw-foot"><span>王OO（資訊室）的畫面</span><span class="stale">畫面尚未更新</span></div>
+      </div>
+      <div class="tw" data-pane="chen" data-name="陳OO" data-unit="護理部">
+        <div class="tw-bar"><i></i><i></i><i></i><b>資訊室</b> › 公告</div>
+        <div class="tw-body">
+          <div class="msg"><div class="av">官</div><div>
+            <div class="who">官方訊息 App　09:00</div>
+            <div class="ac"><div class="ac-tag">公告</div><div class="ac-unit">發文單位：人資室</div><div class="ac-title">請回報 11 月值班名單</div><div class="ac-body">10/20 前完成。</div>
+              <div class="ac-actions"><button>已完成</button><button>需延期</button><button>有疑問</button></div>
+              <div class="ac-status" hidden></div></div>
+          </div></div>
+          <div class="thread" hidden></div>
+        </div>
+        <div class="tw-foot"><span>陳OO（護理部，同團隊成員）的畫面</span><span class="stale">畫面尚未更新</span></div>
+      </div>
+    </div>
+    <div class="ctrl"><span class="log" id="singleLog">尚未有人回覆。</span><button class="btn ghost" data-reset="single">重來</button></div>
+    <p class="note">每個頻道各自計算。兩人同時送出時由資料庫決定唯一一位。團隊成員都可以回覆，卡片會顯示回覆者的工作單位。</p>
+  </section>
+
+  <!-- 圖 04 -->
+  <section class="plate" id="p4" aria-labelledby="h4">
+    <span class="fig">圖 04</span>
+    <div class="plate-head"><h2 id="h4">情境：頻道公告「每人一次」</h2><span class="seal plan">規劃</span></div>
+    <p class="cap">卡片保持開放並顯示回覆人數；已回覆的人再點時，只有自己看到提示，<b>不在頻道裡洗版</b>。</p>
+    <div class="duo">
+      <div class="tw">
+        <div class="tw-bar"><i></i><i></i><i></i><b>護理部</b> › 公告</div>
+        <div class="tw-body"><div class="msg"><div class="av">官</div><div>
+          <div class="who">官方訊息 App　08:30</div>
+          <div class="ac"><div class="ac-tag">公告</div><div class="ac-unit">發文單位：感染管制中心</div><div class="ac-title">完成手部衛生線上課程</div>
+            <div class="ac-actions"><button tabindex="-1">已完成</button><button tabindex="-1">尚未完成</button></div>
+            <div class="ac-count">已有 <b id="cnt">3</b> 人回覆</div></div>
+        </div></div></div>
+        <div class="tw-foot"><span>其他成員看到</span></div>
+      </div>
+      <div class="tw">
+        <div class="tw-bar"><i></i><i></i><i></i><b>護理部</b> › 公告</div>
+        <div class="tw-body"><div class="msg"><div class="av">官</div><div>
+          <div class="who">官方訊息 App　08:30</div>
+          <div class="ac closed"><div class="ac-tag">公告</div><div class="ac-unit">發文單位：感染管制中心</div><div class="ac-title">完成手部衛生線上課程</div>
+            <div class="ac-status">您已於 10月12日 14:30 回覆：已完成</div></div>
+        </div></div></div>
+        <div class="tw-foot"><span>已回覆者本人看到</span></div>
+      </div>
+    </div>
+    <div class="ctrl"><button class="btn" id="plusOne">＋ 又一人回覆</button></div>
+  </section>
+
+  <!-- 圖 05 -->
+  <section class="plate" id="p5" aria-labelledby="h5">
+    <span class="fig">圖 05</span>
+    <div class="plate-head"><h2 id="h5">情境：私人公告點選回覆</h2><span class="seal plan">規劃</span></div>
+    <p class="cap">同一位員工的<b>電腦</b>與<b>手機</b>：在電腦回覆後，手機上還沒更新的舊卡片被點擊時，Bot 會引用原公告提示已回覆過。下方顯示回覆送到哪裡。</p>
+    <div class="duo" id="personal">
+      <div class="tw" data-pane="pc">
+        <div class="tw-bar"><i></i><i></i><i></i><b>官方訊息 App</b></div>
+        <div class="tw-body">
+          <div class="msg"><div class="av">官</div><div>
+            <div class="who">官方訊息 App　11:00</div>
+            <div class="ac"><div class="ac-tag">公告</div><div class="ac-unit">發文單位：資訊室</div><div class="ac-title">11/1 起更換院內 Wi-Fi 密碼</div>
+              <div class="ac-actions"><button>收到</button><button>有疑問，請承辦聯繫</button></div>
+              <div class="ac-status" hidden></div></div>
+          </div></div>
+          <div class="thread" hidden></div>
+        </div>
+        <div class="tw-foot"><span>林OO 的電腦</span><span class="stale">畫面尚未更新</span></div>
+      </div>
+      <div class="tw" data-pane="phone">
+        <div class="tw-bar"><i></i><i></i><i></i><b>官方訊息 App</b></div>
+        <div class="tw-body">
+          <div class="msg"><div class="av">官</div><div>
+            <div class="who">官方訊息 App　11:00</div>
+            <div class="ac"><div class="ac-tag">公告</div><div class="ac-unit">發文單位：資訊室</div><div class="ac-title">11/1 起更換院內 Wi-Fi 密碼</div>
+              <div class="ac-actions"><button>收到</button><button>有疑問，請承辦聯繫</button></div>
+              <div class="ac-status" hidden></div></div>
+          </div></div>
+          <div class="thread" hidden></div>
+        </div>
+        <div class="tw-foot"><span>林OO 的手機</span><span class="stale">畫面尚未更新</span></div>
+      </div>
+    </div>
+    <div class="route">
+      <div data-route="history"><b>對話紀錄</b>一般選項（如「收到」）：只留紀錄，不進收件匣</div>
+      <div data-route="inbox"><b>承辦收件匣・待處理</b>標記「需承辦處理」的選項</div>
+    </div>
+    <div class="ctrl"><span class="log" id="personalLog">請點任一張卡片的選項。</span><button class="btn ghost" data-reset="personal">重來</button></div>
+    <p class="note">私人公告固定每人回覆一次。自由輸入的功能保留但先隱藏。</p>
+  </section>
+
+  <!-- 圖 06 -->
+  <section class="plate" id="p6" aria-labelledby="h6">
+    <span class="fig">圖 06</span>
+    <div class="plate-head"><h2 id="h6">情境：單次排程</h2><span class="seal plan">規劃</span></div>
+    <p class="cap">立即發送，或指定一個時間發送；兩種公告都適用。</p>
+    <div class="tl">
+      <div><b>10/12 建立</b><span>開始前可修改、可取消</span></div>
+      <div><b>10/15 08:00 開始發送</b><span>開始後鎖定，不可修改、不可撤回</span></div>
+      <div><b>服務恢復</b><span>立即補發錯過的排程</span></div>
+    </div>
+  </section>
+
+  <footer><span>CshTeamsBot・功能情境 2026-10-13</span><span>含逐項核對的完整版：feature-review-2026-10-13.html</span></footer>
+</main>
+
+<script>
+(() => {
+  const T = '10月12日 14:30';
+  const $ = (s, r = document) => r.querySelector(s);
+  const $$ = (s, r = document) => [...r.querySelectorAll(s)];
+
+  function closeCard(pane, text) {
+    const card = $('.ac', pane);
+    $('.ac-actions', card).hidden = true;
+    const st = $('.ac-status', card);
+    st.textContent = text; st.hidden = false;
+    card.classList.add('closed', 'thump');
+  }
+  function addQuote(pane, quoted, text) {
+    const th = $('.thread', pane);
+    th.hidden = false;
+    const msg = document.createElement('div'); msg.className = 'msg pop';
+    const av = document.createElement('div'); av.className = 'av'; av.textContent = '官';
+    const box = document.createElement('div');
+    const who = document.createElement('div'); who.className = 'who'; who.textContent = '官方訊息 App　剛剛';
+    const b = document.createElement('div'); b.className = 'bubble';
+    const q = document.createElement('div'); q.className = 'quote'; q.textContent = '↪ ' + quoted;
+    b.append(q, document.createTextNode(text));
+    box.append(who, b); msg.append(av, box); th.append(msg);
+  }
+
+  // 圖 03：單一回覆
+  const single = $('#single'), singleInit = single.innerHTML, singleLog = $('#singleLog');
+  let s = { winner: null, text: '', done: new Set() };
+  function bindSingle() {
+    $$('.tw', single).forEach(pane => {
+      $$('.ac-actions button', pane).forEach(btn => btn.addEventListener('click', () => {
+        const id = pane.dataset.pane;
+        if (!s.winner) {
+          s.winner = id; s.done.add(id);
+          s.text = `已由 ${pane.dataset.name}（${pane.dataset.unit}）於 ${T} 回覆：${btn.textContent}`;
+          closeCard(pane, s.text);
+          $$('.tw', single).filter(p => p !== pane).forEach(p => p.classList.add('is-stale'));
+          singleLog.textContent = `${pane.dataset.name}先送出 → 卡片對所有人關閉。另一人的畫面還沒更新，請試著點它。`;
+        } else if (!s.done.has(id)) {
+          s.done.add(id);
+          pane.classList.remove('is-stale');
+          closeCard(pane, s.text);
+          addQuote(pane, '請回報 11 月值班名單', s.text.replace('已由', '此公告已由').replace(/：.*$/, ''));
+          singleLog.textContent = 'Bot 在公告的回覆串引用原公告，提示已有人代表回覆。';
+        }
+      }));
+    });
+  }
+  bindSingle();
+
+  // 圖 05：私人公告
+  const personal = $('#personal'), personalInit = personal.innerHTML, personalLog = $('#personalLog');
+  let p = { first: null, opt: '', done: new Set() };
+  function setRoute(opt) {
+    $$('.route div').forEach(d => d.classList.toggle('on', !!opt && d.dataset.route === (opt.includes('有疑問') ? 'inbox' : 'history')));
+  }
+  function bindPersonal() {
+    $$('.tw', personal).forEach(pane => {
+      $$('.ac-actions button', pane).forEach(btn => btn.addEventListener('click', () => {
+        const id = pane.dataset.pane;
+        if (!p.first) {
+          p.first = id; p.opt = btn.textContent; p.done.add(id);
+          closeCard(pane, `您已於 ${T} 回覆：${p.opt}`);
+          $$('.tw', personal).filter(x => x !== pane).forEach(x => x.classList.add('is-stale'));
+          setRoute(p.opt);
+          personalLog.textContent = p.opt.includes('有疑問') ? '已回覆 → 進承辦收件匣待處理。請點另一台裝置的舊卡片試試。' : '已回覆 → 只留對話紀錄。請點另一台裝置的舊卡片試試。';
+        } else if (!p.done.has(id)) {
+          p.done.add(id);
+          pane.classList.remove('is-stale');
+          closeCard(pane, `您已於 ${T} 回覆：${p.opt}`);
+          addQuote(pane, '11/1 起更換院內 Wi-Fi 密碼', `此公告已於 ${T} 回覆過`);
+          personalLog.textContent = 'Bot 引用原公告，提示已回覆過；不會重複計算。';
+        }
+      }));
+    });
+  }
+  bindPersonal();
+
+  $$('[data-reset]').forEach(b => b.addEventListener('click', () => {
+    if (b.dataset.reset === 'single') {
+      single.innerHTML = singleInit; s = { winner: null, text: '', done: new Set() };
+      singleLog.textContent = '尚未有人回覆。'; bindSingle();
+    } else {
+      personal.innerHTML = personalInit; p = { first: null, opt: '', done: new Set() };
+      personalLog.textContent = '請點任一張卡片的選項。'; setRoute(null); bindPersonal();
+    }
+  }));
+
+  // 圖 04：人數
+  const cnt = $('#cnt');
+  $('#plusOne').addEventListener('click', () => {
+    cnt.textContent = String(Number(cnt.textContent) + 1);
+    cnt.parentElement.classList.remove('pop'); void cnt.offsetWidth; cnt.parentElement.classList.add('pop');
+  });
+})();
+</script>
+</body>
+</html>
