@@ -1,0 +1,1867 @@
+<!doctype html>
+<html lang="zh-Hant">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Teams 通知平台｜系統架構與資料表（主管討論用）2026-10-20</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@600;900&family=Noto+Sans+TC:wght@400;500;700&display=swap"
+        rel="stylesheet">
+    <style>
+        :root {
+            --paper: #f3eee4;
+            --ink: #1c2220;
+            --muted: #6b675f;
+            --line: #d6ccba;
+            --teal: #0d5c57;
+            --teal-soft: #dfece9;
+            --seal: #c3352b;
+            --seal-soft: #fde7e5;
+            --teams: #5b5fc7;
+            --teams-soft: #e8ebfa;
+            --good: #107c10;
+            --serif: "Noto Serif TC", "Source Han Serif TC", "PMingLiU", serif;
+            --sans: "Noto Sans TC", "Microsoft JhengHei UI", "Microsoft JhengHei", sans-serif;
+            --mono: "Cascadia Mono", "Consolas", monospace;
+        }
+
+        * {
+            box-sizing: border-box
+        }
+
+        html {
+            scroll-behavior: smooth
+        }
+
+        body {
+            margin: 0;
+            color: var(--ink);
+            font-family: var(--sans);
+            line-height: 1.7;
+            background: radial-gradient(1200px 600px at 85% -10%, #fbf8f1 0%, transparent 60%), var(--paper)
+        }
+
+        main {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 24px 80px
+        }
+
+        code {
+            font-family: var(--mono);
+            font-size: .9em;
+            background: #efe7d8;
+            padding: 0 4px;
+            border-radius: 3px
+        }
+
+        .seal {
+            display: inline-flex;
+            align-items: center;
+            font-family: var(--serif);
+            font-weight: 900;
+            font-size: 12.5px;
+            letter-spacing: .18em;
+            padding: 3px 7px 3px 10px;
+            border: 2px solid currentColor;
+            border-radius: 3px;
+            color: var(--seal);
+            transform: rotate(-3deg);
+            white-space: nowrap;
+            line-height: 1.3
+        }
+
+        .hero {
+            padding: 60px 0 36px;
+            border-bottom: 2px solid var(--ink);
+            display: grid;
+            grid-template-columns: 1.6fr .4fr;
+            gap: 40px;
+            align-items: end
+        }
+
+        .hero h1 {
+            font-family: var(--serif);
+            font-weight: 900;
+            font-size: clamp(36px, 5.2vw, 62px);
+            line-height: 1.08;
+            margin: 0
+        }
+
+        .hero h1 small {
+            display: block;
+            font-size: .34em;
+            font-weight: 600;
+            color: var(--teal);
+            letter-spacing: .3em;
+            margin-bottom: 14px
+        }
+
+        .hero .meta {
+            margin-top: 16px;
+            color: var(--muted);
+            font-size: 14px
+        }
+
+        .hero .meta b {
+            color: var(--ink)
+        }
+
+        .hero-stamp {
+            justify-self: end
+        }
+
+        .hero-stamp .seal {
+            font-size: 28px;
+            padding: 10px 14px 10px 20px;
+            border-width: 4px;
+            transform: rotate(-8deg)
+        }
+
+        .toc {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            border-top: 1px solid var(--line);
+            margin-top: 26px
+        }
+
+        .toc a {
+            padding: 12px 10px 4px;
+            border-right: 1px solid var(--line);
+            color: var(--ink);
+            text-decoration: none;
+            font-size: 13.5px
+        }
+
+        .toc a:last-child {
+            border-right: 0
+        }
+
+        .toc a b {
+            display: block;
+            font-family: var(--serif);
+            font-size: 22px;
+            line-height: 1;
+            color: var(--teal)
+        }
+
+        .toc a:hover b {
+            color: var(--seal)
+        }
+
+        .plate {
+            position: relative;
+            margin: 56px 0 0;
+            padding: 34px 36px 32px 88px;
+            background: rgba(255, 255, 255, .55);
+            border: 1px solid var(--line);
+            box-shadow: 0 18px 40px -30px rgba(40, 30, 10, .35)
+        }
+
+        .fig {
+            position: absolute;
+            left: 26px;
+            top: 34px;
+            writing-mode: vertical-rl;
+            font-family: var(--serif);
+            font-weight: 900;
+            font-size: 15px;
+            letter-spacing: .35em;
+            color: var(--teal)
+        }
+
+        .fig::after {
+            content: "";
+            display: block;
+            width: 2px;
+            height: 56px;
+            background: var(--teal);
+            margin: 12px auto 0
+        }
+
+        .plate h2 {
+            font-family: var(--serif);
+            font-weight: 900;
+            font-size: 27px;
+            margin: 0;
+            letter-spacing: .04em
+        }
+
+        .plate h3 {
+            font-family: var(--serif);
+            font-size: 18px;
+            margin: 28px 0 12px;
+            border-bottom: 1px solid var(--line);
+            padding-bottom: 6px
+        }
+
+        .cap {
+            margin: 6px 0 22px;
+            color: var(--muted);
+            font-size: 15px
+        }
+
+        .cap b {
+            color: var(--ink)
+        }
+
+        .note {
+            font-size: 13px;
+            color: var(--muted);
+            margin-top: 12px
+        }
+
+        /* SVG 圖 */
+        .dia {
+            width: 100%;
+            height: auto;
+            display: block;
+            font-family: var(--sans);
+            background: #fff;
+            border: 1px solid var(--line)
+        }
+
+        .dia .zl {
+            font-family: var(--serif);
+            font-weight: 900;
+            font-size: 15px;
+            letter-spacing: .2em
+        }
+
+        .dia .box {
+            fill: #fff;
+            stroke: var(--ink);
+            stroke-width: 1.5
+        }
+
+        .dia .box.core {
+            fill: var(--teal);
+            stroke: var(--teal)
+        }
+
+        .dia .box.ext {
+            fill: #faf7f1;
+            stroke: var(--muted);
+            stroke-dasharray: 5 4
+        }
+
+        .dia .sub {
+            fill: #fbfdfc;
+            stroke: var(--teal);
+            stroke-width: 1
+        }
+
+        .dia .chip {
+            fill: #f6f1e7;
+            stroke: var(--line)
+        }
+
+        .dia .tt {
+            font-size: 15px;
+            font-weight: 700;
+            fill: var(--ink)
+        }
+
+        .dia .ts {
+            font-size: 12px;
+            fill: var(--muted)
+        }
+
+        .dia .lbl {
+            font-family: var(--mono);
+            font-size: 11px;
+            fill: var(--muted)
+        }
+
+        .dia .core-t {
+            fill: #f4efe6
+        }
+
+        .dia .core-s {
+            fill: #cfe3df
+        }
+
+        .dia .mono {
+            font-family: var(--mono);
+            font-size: 13px;
+            font-weight: 700;
+            fill: var(--ink)
+        }
+
+        .dia .mono.core-t {
+            fill: #f4efe6
+        }
+
+        .dia .ln {
+            fill: none;
+            stroke: var(--ink);
+            stroke-width: 1.6
+        }
+
+        .dia .ln.out {
+            stroke: var(--teams);
+            stroke-dasharray: 6 4
+        }
+
+        .dia .ln.hook {
+            stroke: var(--teal);
+            stroke-dasharray: 6 4
+        }
+
+        .dia .ln.fk {
+            stroke: #4d4a44;
+            stroke-width: 1.6
+        }
+
+        .dia .ln.logic {
+            stroke: var(--muted);
+            stroke-width: 1.2;
+            stroke-dasharray: 4 4
+        }
+
+        .dia .badge circle {
+            fill: var(--seal)
+        }
+
+        .dia .badge text {
+            fill: #fff;
+            font-size: 12px;
+            font-weight: 700;
+            text-anchor: middle;
+            dominant-baseline: central
+        }
+
+        .linekey {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px 22px;
+            font-size: 12.5px;
+            color: var(--muted);
+            margin-top: 12px
+        }
+
+        .linekey span {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px
+        }
+
+        .linekey s {
+            display: inline-block;
+            width: 34px;
+            height: 0;
+            border-top: 2px solid var(--ink);
+            text-decoration: none
+        }
+
+        .linekey s.out {
+            border-top: 2px dashed var(--teams)
+        }
+
+        .linekey s.hook {
+            border-top: 2px dashed var(--teal)
+        }
+
+        .linekey s.logic {
+            border-top: 2px dashed var(--muted)
+        }
+
+        .keys {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px 22px;
+            margin-top: 18px;
+            font-size: 13.8px;
+            padding: 0;
+            list-style: none
+        }
+
+        .keys li {
+            display: flex;
+            gap: 8px;
+            align-items: flex-start
+        }
+
+        .keys li i {
+            flex: 0 0 22px;
+            height: 22px;
+            border-radius: 50%;
+            background: var(--seal);
+            color: #fff;
+            font-style: normal;
+            font-weight: 700;
+            font-size: 12px;
+            display: grid;
+            place-items: center;
+            margin-top: 2px
+        }
+
+        .callouts {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 16px;
+            margin-top: 22px
+        }
+
+        .callout {
+            background: #fff;
+            border: 1px solid var(--line);
+            padding: 14px 16px;
+            font-size: 14px
+        }
+
+        .callout b {
+            display: block;
+            font-family: var(--serif);
+            font-size: 16px;
+            margin-bottom: 4px;
+            color: var(--teal)
+        }
+
+        /* 旅程 */
+        .journey {
+            display: grid;
+            grid-template-columns: repeat(6, 1fr);
+            gap: 12px;
+            counter-reset: s
+        }
+
+        .st {
+            background: #fff;
+            border: 1px solid var(--line);
+            padding: 18px 12px 12px;
+            position: relative
+        }
+
+        .st::before {
+            counter-increment: s;
+            content: counter(s);
+            position: absolute;
+            top: -14px;
+            left: 10px;
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            background: var(--ink);
+            color: var(--paper);
+            display: grid;
+            place-items: center;
+            font-family: var(--serif);
+            font-weight: 900;
+            font-size: 14px
+        }
+
+        .st h4 {
+            margin: 2px 0 6px;
+            font-size: 15px
+        }
+
+        .st p {
+            margin: 0;
+            font-size: 13px;
+            color: #3d3a35
+        }
+
+        .st .eg {
+            margin-top: 8px;
+            padding-top: 6px;
+            border-top: 1px dashed var(--line);
+            font-size: 12.5px;
+            color: var(--teal)
+        }
+
+        .st .tb-used {
+            margin-top: 6px;
+            font-size: 11.5px;
+            color: var(--muted);
+            font-family: var(--mono);
+            overflow-wrap: anywhere
+        }
+
+        /* 表格 */
+        .gt {
+            width: 100%;
+            border-collapse: collapse;
+            background: #fff;
+            font-size: 14px
+        }
+
+        .gt th {
+            background: var(--ink);
+            color: var(--paper);
+            text-align: left;
+            padding: 9px 12px;
+            font-weight: 500
+        }
+
+        .gt td {
+            padding: 9px 12px;
+            border-top: 1px solid var(--line);
+            vertical-align: top
+        }
+
+        .gt td:first-child {
+            font-weight: 700
+        }
+
+        .gt td.m {
+            font-family: var(--mono);
+            font-size: 12.5px;
+            font-weight: 400
+        }
+
+        /* 資料概覽 */
+        .data {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 12px
+        }
+
+        .dt {
+            background: #fff;
+            border: 1px solid var(--line);
+            overflow: hidden;
+            display: flex;
+            flex-direction: column
+        }
+
+        .dt h4 {
+            margin: 0;
+            padding: 10px 12px;
+            background: var(--ink);
+            color: var(--paper);
+            font-size: 15px
+        }
+
+        .dt.core h4 {
+            background: var(--teal)
+        }
+
+        .dt h4 small {
+            display: block;
+            font-family: var(--mono);
+            font-weight: 400;
+            font-size: 11px;
+            color: #cfe3df;
+            margin-top: 2px
+        }
+
+        .dt .body {
+            padding: 10px 12px;
+            font-size: 13px;
+            flex: 1
+        }
+
+        .dt .body p {
+            margin: 0 0 8px
+        }
+
+        .dt .like {
+            font-size: 12.5px;
+            color: var(--teal);
+            border-top: 1px dashed var(--line);
+            padding: 8px 12px;
+            background: #fbfdfc
+        }
+
+        .flowline {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            margin: 16px 0 4px;
+            font-size: 14px;
+            flex-wrap: wrap
+        }
+
+        .flowline span {
+            background: var(--teal);
+            color: #fff;
+            padding: 4px 12px;
+            border-radius: 20px
+        }
+
+        .flowline i {
+            font-style: normal;
+            color: var(--muted)
+        }
+
+        /* 共通規範 */
+        .common {
+            background: #fff;
+            border: 1px dashed var(--teal);
+            padding: 14px 18px;
+            font-size: 13.8px;
+            display: grid;
+            grid-template-columns: 1fr 1.15fr;
+            gap: 22px
+        }
+
+        .common>div {
+            min-width: 0
+        }
+
+        .common ul {
+            margin: 6px 0 0;
+            padding-left: 20px
+        }
+
+        .common li {
+            margin-bottom: 4px
+        }
+
+        .ddl {
+            margin: 6px 0 0;
+            padding: 10px 12px;
+            background: #1c2220;
+            color: #e9e2d2;
+            font-family: var(--mono);
+            font-size: 11.5px;
+            line-height: 1.6;
+            white-space: pre;
+            overflow-x: auto
+        }
+
+        .ddl i {
+            color: #9fd3c9;
+            font-style: normal
+        }
+
+        /* 資料表明細 */
+        .tb {
+            background: #fff;
+            border: 1px solid var(--line);
+            margin-top: 20px;
+            overflow: hidden
+        }
+
+        .tb>header {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 4px 16px;
+            align-items: baseline;
+            padding: 12px 16px;
+            background: var(--teal);
+            color: #f4efe6
+        }
+
+        .tb.cfg>header {
+            background: var(--ink)
+        }
+
+        .tb>header b {
+            font-family: var(--serif);
+            font-size: 18px
+        }
+
+        .tb>header code {
+            background: rgba(255, 255, 255, .15);
+            color: #f4efe6;
+            font-size: 13px
+        }
+
+        .tb>header span {
+            font-size: 13.5px;
+            color: #dfece9;
+            margin-left: auto
+        }
+
+        .tb .bd {
+            display: grid;
+            grid-template-columns: 1.45fr 1fr
+        }
+
+        .tb .bd>div {
+            padding: 12px 16px;
+            min-width: 0
+        }
+
+        .tb .bd>div+div {
+            border-left: 1px solid var(--line);
+            background: #fcfaf6
+        }
+
+        .fld {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 12.8px;
+            table-layout: fixed
+        }
+
+        .fld tr:first-child td:nth-child(1) {
+            width: 37%
+        }
+
+        .fld tr:first-child td:nth-child(2) {
+            width: 24%
+        }
+
+        .fld td {
+            padding: 4px 8px;
+            border-top: 1px solid #efe7d8;
+            vertical-align: top;
+            overflow-wrap: anywhere
+        }
+
+        .fld td:first-child {
+            font-family: var(--mono);
+            font-size: 12px
+        }
+
+        .fld td.t {
+            font-family: var(--mono);
+            font-size: 11.5px;
+            color: var(--muted)
+        }
+
+        .fld tr.grp td {
+            background: #f6f1e7;
+            color: var(--teal);
+            font-family: var(--sans);
+            font-weight: 700;
+            font-size: 12px;
+            padding: 3px 8px
+        }
+
+        .k {
+            font-family: var(--sans);
+            font-size: 10px;
+            font-weight: 700;
+            padding: 0 4px;
+            border-radius: 3px;
+            margin-left: 4px;
+            vertical-align: 1px
+        }
+
+        .k.pk {
+            background: var(--ink);
+            color: #fff
+        }
+
+        .k.fk {
+            background: var(--teams-soft);
+            color: var(--teams)
+        }
+
+        .tb dl {
+            margin: 0;
+            font-size: 13.5px
+        }
+
+        .tb dt {
+            font-weight: 700;
+            color: var(--teal);
+            margin-top: 10px
+        }
+
+        .tb dt:first-child {
+            margin-top: 0
+        }
+
+        .tb dd {
+            margin: 2px 0 0
+        }
+
+        .idx {
+            margin-top: 4px;
+            font-family: var(--mono);
+            font-size: 11.5px;
+            line-height: 1.65;
+            color: #2d4b48;
+            overflow-wrap: anywhere
+        }
+
+        .idx b {
+            color: var(--ink)
+        }
+
+        .mini {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 12.8px;
+            margin-top: 4px
+        }
+
+        .mini td {
+            padding: 4px 6px;
+            border-top: 1px solid #efe7d8;
+            vertical-align: top
+        }
+
+        .mini td:first-child {
+            font-weight: 700;
+            white-space: nowrap;
+            width: 30%
+        }
+
+        footer {
+            margin-top: 52px;
+            font-size: 12px;
+            color: var(--muted);
+            display: flex;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 8px
+        }
+
+        @media (max-width:1000px) {
+
+            .hero,
+            .common {
+                grid-template-columns: 1fr
+            }
+
+            .keys,
+            .callouts,
+            .journey,
+            .data {
+                grid-template-columns: 1fr 1fr
+            }
+
+            .tb .bd {
+                grid-template-columns: 1fr
+            }
+
+            .tb .bd>div+div {
+                border-left: 0;
+                border-top: 1px solid var(--line)
+            }
+
+            .toc {
+                grid-template-columns: repeat(3, 1fr)
+            }
+
+            .plate {
+                padding: 30px 18px 26px 54px
+            }
+
+            .fig {
+                left: 14px
+            }
+        }
+
+        @media print {
+            body {
+                background: #fff
+            }
+
+            .plate {
+                box-shadow: none
+            }
+
+            .tb {
+                break-inside: avoid
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <svg width="0" height="0" style="position:absolute" aria-hidden="true">
+        <defs>
+            <marker id="ah" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7"
+                orient="auto-start-reverse">
+                <path d="M0,0 L10,5 L0,10 z" fill="#1c2220" />
+            </marker>
+            <marker id="ah-teams" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7"
+                orient="auto-start-reverse">
+                <path d="M0,0 L10,5 L0,10 z" fill="#5b5fc7" />
+            </marker>
+            <marker id="ah-teal" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7"
+                orient="auto-start-reverse">
+                <path d="M0,0 L10,5 L0,10 z" fill="#0d5c57" />
+            </marker>
+            <marker id="ah-fk" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+                <path d="M0,0 L10,5 L0,10 z" fill="#4d4a44" />
+            </marker>
+            <marker id="ah-logic" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+                <path d="M0,0 L10,5 L0,10 z" fill="#6b675f" />
+            </marker>
+        </defs>
+    </svg>
+    <main>
+        <header class="hero">
+            <div>
+                <h1><small>CSH TEAMS 通知平台</small>系統架構與資料表</h1>
+                <div class="meta">2026-10-20　｜　<b>主管討論用</b>　｜　系統全貌、通知流程、使用情境、資料表設計</div>
+                <nav class="toc" aria-label="目錄">
+                    <a href="#s1"><b>01</b>系統架構</a>
+                    <a href="#s2"><b>02</b>通知旅程</a>
+                    <a href="#s3"><b>03</b>支援情境</a>
+                    <a href="#s4"><b>04</b>資料怎麼存</a>
+                    <a href="#s5"><b>05</b>資料表明細</a>
+                </nav>
+            </div>
+            <div class="hero-stamp"><span class="seal">待核</span></div>
+        </header>
+
+        <!-- 01 系統架構 -->
+        <section class="plate" id="s1">
+            <span class="fig">一</span>
+            <h2>系統架構</h2>
+            <p class="cap">分成三區：Microsoft 雲端、院內防火牆、院內網路。<b>對外只開一個入口</b>（Teams 按鈕回傳），通知
+                API、操作後台、資料服務都只在內網。<b>主程式不直接連資料庫</b>，所有讀寫都經資料服務（SrvApi），每個動作一次完成、不會做一半。</p>
+
+            <svg class="dia" viewBox="0 0 1120 620" role="img" aria-labelledby="d1t">
+                <title id="d1t">通知平台系統架構：Microsoft 雲端、院內防火牆、院內網路三區</title>
+                <rect x="16" y="40" width="250" height="560" fill="#e8ebfa" stroke="#c9cdf0" />
+                <text x="141" y="70" text-anchor="middle" class="zl" fill="#5b5fc7">Microsoft 雲端</text>
+                <rect x="288" y="40" width="48" height="560" fill="#fde7e5" stroke="#c3352b" stroke-dasharray="6 4" />
+                <text x="312" y="70" text-anchor="middle" class="zl" fill="#c3352b"
+                    style="letter-spacing:.05em">WAF</text>
+                <text x="312" y="500" text-anchor="middle" fill="#c3352b" font-size="13"
+                    style="writing-mode:vertical-rl">只開放 Teams 按鈕回傳</text>
+                <rect x="356" y="40" width="748" height="560" fill="#dfece9" stroke="#b9d3ce" />
+                <text x="730" y="70" text-anchor="middle" class="zl" fill="#0d5c57">院內網路（內網）</text>
+
+                <rect x="40" y="96" width="200" height="64" class="box" />
+                <text x="140" y="122" text-anchor="middle" class="tt">員工的 Teams</text>
+                <text x="140" y="143" text-anchor="middle" class="ts">電腦、手機；個人對話與單位頻道</text>
+
+                <rect x="40" y="250" width="200" height="80" class="box" />
+                <text x="140" y="276" text-anchor="middle" class="tt">Teams 訊息服務</text>
+                <text x="140" y="297" text-anchor="middle" class="ts">轉送卡片與按鈕點擊</text>
+                <text x="140" y="315" text-anchor="middle" class="ts">App 由管理員預先安裝</text>
+
+                <rect x="40" y="440" width="200" height="64" class="box" />
+                <text x="140" y="466" text-anchor="middle" class="tt">Microsoft 帳號目錄</text>
+                <text x="140" y="487" text-anchor="middle" class="ts">用員工代碼找到 Teams 帳號</text>
+
+                <rect x="380" y="86" width="360" height="324" class="box core" />
+                <text x="560" y="110" text-anchor="middle" class="tt core-t">通知平台主程式（WebApi）</text>
+                <rect x="400" y="122" width="320" height="62" class="sub" />
+                <text x="560" y="147" text-anchor="middle" class="tt" font-size="14">Teams 回傳入口</text>
+                <text x="560" y="168" text-anchor="middle" class="ts">接收卡片按鈕；員工打字只回固定說明</text>
+                <rect x="400" y="196" width="320" height="88" class="sub" />
+                <text x="560" y="221" text-anchor="middle" class="tt" font-size="14">背景作業</text>
+                <text x="560" y="242" text-anchor="middle" class="ts">排程時間到開始發送・找人並投遞</text>
+                <text x="560" y="261" text-anchor="middle" class="ts">更新卡片・把回覆送回原系統</text>
+                <rect x="400" y="298" width="152" height="94" class="sub" />
+                <text x="476" y="326" text-anchor="middle" class="tt" font-size="14">通知 API</text>
+                <text x="476" y="347" text-anchor="middle" class="ts">建立・取消・查詢</text>
+                <text x="476" y="365" text-anchor="middle" class="ts">需金鑰（API Key）</text>
+                <rect x="568" y="298" width="152" height="94" class="sub" />
+                <text x="644" y="326" text-anchor="middle" class="tt" font-size="14">操作後台</text>
+                <text x="644" y="347" text-anchor="middle" class="ts">Windows 登入</text>
+                <text x="644" y="365" text-anchor="middle" class="ts">平台管理者白名單</text>
+
+                <rect x="800" y="110" width="280" height="140" class="box" />
+                <text x="940" y="138" text-anchor="middle" class="tt">資料服務（SrvApi）</text>
+                <text x="940" y="162" text-anchor="middle" class="ts">唯一能讀寫資料庫的程式</text>
+                <text x="940" y="182" text-anchor="middle" class="ts">一個動作＝一個交易，不會做一半</text>
+                <text x="940" y="202" text-anchor="middle" class="ts">只開放內網・呼叫需金鑰</text>
+                <text x="940" y="222" text-anchor="middle" class="ts">使用院內共用元件 CSH.Database</text>
+
+                <rect x="800" y="300" width="280" height="130" class="box" />
+                <text x="940" y="328" text-anchor="middle" class="tt">HealthCare 資料庫</text>
+                <text x="940" y="354" text-anchor="middle" class="ts">新增 5 張 Teams 資料表</text>
+                <text x="940" y="374" text-anchor="middle" class="ts">員工、單位主檔只讀取不修改</text>
+                <text x="940" y="394" text-anchor="middle" class="ts">最小權限資料庫帳號</text>
+                <text x="940" y="414" text-anchor="middle" class="ts">DBA 執行建表與結構異動</text>
+
+                <rect x="400" y="480" width="152" height="90" class="box" />
+                <text x="476" y="506" text-anchor="middle" class="tt" font-size="14">介接系統</text>
+                <text x="476" y="527" text-anchor="middle" class="ts">簽核・排班・資訊服務…</text>
+                <text x="476" y="546" text-anchor="middle" class="ts">接收平台送回的回覆</text>
+                <rect x="568" y="480" width="152" height="90" class="box" />
+                <text x="644" y="506" text-anchor="middle" class="tt" font-size="14">內網瀏覽器</text>
+                <text x="644" y="527" text-anchor="middle" class="ts">平台管理者</text>
+                <text x="644" y="546" text-anchor="middle" class="ts">（唯一後台角色）</text>
+
+                <rect x="800" y="480" width="280" height="90" class="box ext" />
+                <text x="940" y="506" text-anchor="middle" class="tt" font-size="14">本機開發與測試</text>
+                <text x="940" y="527" text-anchor="middle" class="ts">LocalDB 建立相同的資料庫結構</text>
+                <text x="940" y="546" text-anchor="middle" class="ts">合成員工資料・模擬 Teams 服務</text>
+
+                <path d="M140,162 L140,248" class="ln" marker-start="url(#ah)" marker-end="url(#ah)" />
+                <path d="M240,262 L350,262 L350,153 L398,153" class="ln" marker-end="url(#ah)" />
+                <path d="M400,262 L242,314" class="ln out" marker-end="url(#ah-teams)" />
+                <path d="M400,276 L242,466" class="ln out" marker-end="url(#ah-teams)" />
+                <path d="M455,478 L455,394" class="ln" marker-end="url(#ah)" />
+                <path d="M500,394 L500,478" class="ln hook" marker-end="url(#ah-teal)" />
+                <path d="M644,478 L644,394" class="ln" marker-end="url(#ah)" />
+                <path d="M740,180 L798,180" class="ln" marker-end="url(#ah)" />
+                <path d="M940,250 L940,298" class="ln" marker-end="url(#ah)" />
+
+                <g class="badge">
+                    <circle cx="140" cy="205" r="11" /><text x="140" y="205">1</text>
+                </g>
+                <g class="badge">
+                    <circle cx="312" cy="262" r="11" /><text x="312" y="262">2</text>
+                </g>
+                <g class="badge">
+                    <circle cx="312" cy="302" r="11" /><text x="312" y="302">3</text>
+                </g>
+                <g class="badge">
+                    <circle cx="312" cy="374" r="11" /><text x="312" y="374">4</text>
+                </g>
+                <g class="badge">
+                    <circle cx="455" cy="436" r="11" /><text x="455" y="436">5</text>
+                </g>
+                <g class="badge">
+                    <circle cx="500" cy="436" r="11" /><text x="500" y="436">6</text>
+                </g>
+                <g class="badge">
+                    <circle cx="644" cy="436" r="11" /><text x="644" y="436">7</text>
+                </g>
+                <g class="badge">
+                    <circle cx="769" cy="180" r="11" /><text x="769" y="180">8</text>
+                </g>
+                <g class="badge">
+                    <circle cx="940" cy="274" r="11" /><text x="940" y="274">9</text>
+                </g>
+            </svg>
+
+            <div class="linekey">
+                <span><s></s>從外部進來或內網呼叫</span>
+                <span><s class="out"></s>平台主動對外連線（不需開放入口）</span>
+                <span><s class="hook"></s>把回覆送回原系統</span>
+            </div>
+            <ul class="keys">
+                <li><i>1</i><span>員工在 Teams 收到通知卡片、按下按鈕。</span></li>
+                <li><i>2</i><span>Teams 把按鈕點擊送進來，平台先驗證確實來自 Microsoft。<b>這是唯一對外入口。</b></span></li>
+                <li><i>3</i><span>平台主動把卡片送到個人對話或頻道，並在有人回覆後更新原卡片。</span></li>
+                <li><i>4</i><span>用員工代碼推出公司帳號（<code>csh{員工代碼}@csh.org.tw</code>），查出對應的 Teams 帳號。</span></li>
+                <li><i>5</i><span>介接系統帶金鑰呼叫通知 API：建立（可指定發送時間）、取消尚未開始的通知、查詢結果。</span></li>
+                <li><i>6</i><span>回覆與送達結果附防偽簽章送回介接系統；暫時送不到會依間隔自動重送。</span></li>
+                <li><i>7</i><span>平台管理者維護設定，也能在後台做介接系統能做的事：發通知、排程、修改或取消、查看回覆。</span></li>
+                <li><i>8</i><span>主程式透過內網呼叫資料服務，呼叫要帶金鑰；金鑰放在密鑰存放處，不寫在設定檔。</span></li>
+                <li><i>9</i><span>防重複、搶第一位回覆等判斷，都在資料服務的單一交易與資料庫規則內完成。</span></li>
+            </ul>
+
+            <div class="callouts">
+                <div class="callout"><b>對外只開一扇門</b>只有 Teams 的按鈕回傳能從外部進來；通知 API、後台、資料服務都只在內網。</div>
+                <div class="callout"><b>資料統一由資料服務處理</b>主程式不直接連資料庫，與院內其他系統（例如文件辨識系統）的分層方式相同，方便維運與稽核。</div>
+                <div class="callout"><b>資料放在院內標準資料庫</b>使用院內建表格式，建表與結構異動由 DBA 執行。員工與單位資料直接讀取院內主檔，不另外複製。</div>
+            </div>
+        </section>
+
+        <!-- 02 通知旅程 -->
+        <section class="plate" id="s2">
+            <span class="fig">二</span>
+            <h2>一則通知的旅程</h2>
+            <p class="cap">以「<b>簽核系統請主管核准一張單</b>」為例，從建立到回覆送回共六步。每一步下方標示寫入的資料表（詳見第四、五節）。</p>
+            <div class="journey">
+                <div class="st">
+                    <h4>建立</h4>
+                    <p>介接系統指定範本、對象、標題與內容，呼叫通知 API。平台檢查是否在授權範圍內；重送同一請求不會建第二則。</p>
+                    <div class="eg">簽核系統：通知王主任「請核准請假單」</div>
+                    <div class="tb-used">TeamsNotification・TeamsDelivery</div>
+                </div>
+                <div class="st">
+                    <h4>等待排程</h4>
+                    <p>可以立即發，也可在呼叫時帶入發送時間。開始前介接系統可用 API 取消、平台管理者可在後台修改或取消；開始後鎖定。</p>
+                    <div class="eg">選擇立即發送</div>
+                    <div class="tb-used">TeamsNotification</div>
+                </div>
+                <div class="st">
+                    <h4>找人並發送</h4>
+                    <p>用員工代碼找到 Teams 帳號，把卡片送到個人對話或頻道；每位收件者分別記錄成功或失敗。</p>
+                    <div class="eg">王主任的 Teams 跳出卡片</div>
+                    <div class="tb-used">TeamsEmployee・TeamsDelivery</div>
+                </div>
+                <div class="st">
+                    <h4>員工回覆</h4>
+                    <p>員工按卡片上的按鈕。平台記下誰、在哪個單位、選了什麼、何時。</p>
+                    <div class="eg">王主任按「核准」</div>
+                    <div class="tb-used">TeamsReply・TeamsDelivery</div>
+                </div>
+                <div class="st">
+                    <h4>更新卡片</h4>
+                    <p>卡片改成「已回覆」，其他裝置或頻道成員也看到最新狀態。</p>
+                    <div class="eg">卡片顯示「您已於 10月20日 09:30 回覆：核准」</div>
+                    <div class="tb-used">TeamsDelivery</div>
+                </div>
+                <div class="st">
+                    <h4>回送原系統</h4>
+                    <p>平台把回覆送回簽核系統，附上防偽簽章；對方暫時收不到會自動重送。</p>
+                    <div class="eg">簽核系統收到 APPROVE，自動結案</div>
+                    <div class="tb-used">TeamsReply・TeamsDelivery</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 03 支援情境 -->
+        <section class="plate" id="s3">
+            <span class="fig">三</span>
+            <h2>支援的使用情境</h2>
+            <p class="cap">延續先前討論的功能情境，用語由「公告」改為「通知」。</p>
+            <table class="gt">
+                <thead>
+                    <tr>
+                        <th style="width:18%">情境</th>
+                        <th style="width:42%">員工看到什麼</th>
+                        <th>平台怎麼保證</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>私人通知</td>
+                        <td>在自己與 App 的個人對話收到卡片，只有本人看得到；可開啟文件連結。</td>
+                        <td>每位收件者各自記錄送達結果，一人失敗不影響其他人。</td>
+                    </tr>
+                    <tr>
+                        <td>私人通知回覆</td>
+                        <td>按一次就完成。若在電腦按過，手機上的舊卡片再按會提示「已回覆過」。</td>
+                        <td>每人只算一次；連點或網路重送都回傳原本的結果，不會重複計算。</td>
+                    </tr>
+                    <tr>
+                        <td>頻道通知・單一回覆</td>
+                        <td>單位頻道出現一張卡片，<b>第一位按的人代表單位回覆</b>，卡片對所有人關閉並顯示「已由 王OO（資訊室）回覆」。</td>
+                        <td>兩人同時按，由資料庫決定唯一一位；發到多個頻道時各頻道各自計算。</td>
+                    </tr>
+                    <tr>
+                        <td>頻道通知・每人一次</td>
+                        <td>卡片保持開放並顯示「已有 N 人回覆」；自己按下時看到「您已回覆」，不會在頻道裡洗版。</td>
+                        <td>每人只算一次，人數自動累加。</td>
+                    </tr>
+                    <tr>
+                        <td>排程發送</td>
+                        <td>指定時間自動送達。介接系統呼叫時帶入發送時間即可，不必自己等時間到再呼叫。</td>
+                        <td>開始前可取消（API 或後台）、可修改（後台），開始後鎖定；服務中斷恢復後立即補發。「全部在職員工」在發送當下才決定名單。</td>
+                    </tr>
+                    <tr>
+                        <td>員工自己打字</td>
+                        <td>App 回覆固定說明：「請用卡片選項回覆，其他問題請洽〔單位／分機〕」。</td>
+                        <td>打字內容不保存、不轉給任何人。</td>
+                    </tr>
+                    <tr>
+                        <td>查看回覆</td>
+                        <td>平台管理者在後台看到每位回覆者與其當時的工作單位，可依選項篩選。</td>
+                        <td>回覆當下的單位會被記住，之後人事調動不會改寫歷史。</td>
+                    </tr>
+                </tbody>
+            </table>
+        </section>
+
+        <!-- 04 資料怎麼存 -->
+        <section class="plate" id="s4">
+            <span class="fig">四</span>
+            <h2>資料怎麼存</h2>
+            <p class="cap">新增 <b>5 張資料表</b>，全部放在 HealthCare 資料庫。主線只有三層：<b>一則通知 → 發給誰 → 誰回了什麼</b>；另有平台設定與員工 Teams 身分各一張。
+            </p>
+            <div class="flowline"><span>通知</span><i>一則通知發給多個對象 →</i><span>投遞紀錄</span><i>每個對象可收到回覆 →</i><span>回覆紀錄</span>
+            </div>
+            <div class="data" style="margin-top:18px">
+                <div class="dt">
+                    <h4>平台設定<small>TeamsSetting</small></h4>
+                    <div class="body">
+                        <p>平台管理者在後台維護的設定：介接系統、可發佈頻道、回覆選項組、通知範本。</p>
+                        <p>總量只有數十筆。</p>
+                    </div>
+                    <div class="like">像「規則手冊」：誰能發、能發到哪、卡片長什麼樣。</div>
+                </div>
+                <div class="dt core">
+                    <h4>通知<small>TeamsNotification</small></h4>
+                    <div class="body">
+                        <p>每次發送一筆：誰建立的、標題內容、發文單位、用哪個範本、排程時間、目前狀態。</p>
+                        <p>建立當下把選項清單記下來，之後範本改了也不影響。</p>
+                    </div>
+                    <div class="like">像「發文單」：這次要發什麼。</div>
+                </div>
+                <div class="dt core">
+                    <h4>投遞紀錄<small>TeamsDelivery</small></h4>
+                    <div class="body">
+                        <p>每位收件員工或每個頻道一筆：有沒有送到、失敗原因、卡片在 Teams 上的位置、已有幾人回覆。</p>
+                        <p>也記錄要不要更新卡片、結果是否已通知原系統。</p>
+                    </div>
+                    <div class="like">像「掛號追蹤單」：每一封寄到了沒。</div>
+                </div>
+                <div class="dt core">
+                    <h4>回覆紀錄<small>TeamsReply</small></h4>
+                    <div class="body">
+                        <p>每次有效回覆一筆：誰回的、選了什麼、補充文字、當時的工作單位、回覆時間。</p>
+                        <p>也記錄是否已送回原系統。</p>
+                    </div>
+                    <div class="like">像「回條」：誰回了什麼。</div>
+                </div>
+                <div class="dt">
+                    <h4>員工 Teams 身分<small>TeamsEmployee</small></h4>
+                    <div class="body">
+                        <p>每位員工一筆：員工編號對應到哪個 Teams 帳號，以及與 App 的個人對話位置。</p>
+                        <p>不存對話內容。</p>
+                    </div>
+                    <div class="like">像「通訊錄」：這位員工在 Teams 的地址。</div>
+                </div>
+            </div>
+
+            <h3>表與表的關係</h3>
+            <svg class="dia" viewBox="0 0 1120 410" role="img" aria-labelledby="d4t">
+                <title id="d4t">5 張 Teams 資料表關聯</title>
+                <path d="M620,100 L562,100" class="ln fk" marker-end="url(#ah-fk)" />
+                <path d="M880,100 L822,100" class="ln fk" marker-end="url(#ah-fk)" />
+                <path d="M360,100 L282,100" class="ln logic" marker-end="url(#ah-logic)" />
+                <path d="M700,70 C700,28 160,28 160,59" class="ln logic" marker-end="url(#ah-logic)" />
+                <path d="M720,130 L720,219" class="ln logic" marker-end="url(#ah-logic)" />
+                <path d="M720,280 L720,339" class="ln logic" marker-end="url(#ah-logic)" />
+                <path d="M460,130 L460,339" class="ln logic" marker-end="url(#ah-logic)" />
+                <path d="M980,130 C980,365 860,365 821,365" class="ln logic" marker-end="url(#ah-logic)" />
+
+                <text x="430" y="30" text-anchor="middle" class="lbl">頻道代碼</text>
+                <text x="321" y="122" text-anchor="middle" class="lbl">系統代碼</text>
+                <text x="321" y="137" text-anchor="middle" class="lbl">範本代碼</text>
+                <text x="591" y="92" text-anchor="middle" class="lbl">FK</text>
+                <text x="851" y="92" text-anchor="middle" class="lbl">FK</text>
+                <text x="728" y="180" class="lbl">員工編號</text>
+                <text x="728" y="315" class="lbl">員工編號</text>
+                <text x="468" y="240" class="lbl">發文單位</text>
+                <text x="988" y="250" class="lbl">回覆者</text>
+
+                <rect x="40" y="60" width="240" height="200" class="box" />
+                <text x="160" y="88" text-anchor="middle" class="mono">TeamsSetting</text>
+                <text x="160" y="106" text-anchor="middle" class="ts">平台設定（依類型分列）</text>
+                <rect x="56" y="122" width="208" height="26" class="chip" /><text x="66" y="140"
+                    class="ts">S　介接系統（含允許範圍）</text>
+                <rect x="56" y="154" width="208" height="26" class="chip" /><text x="66" y="172"
+                    class="ts">C　可發佈頻道</text>
+                <rect x="56" y="186" width="208" height="26" class="chip" /><text x="66" y="204"
+                    class="ts">O　回覆選項組（含選項）</text>
+                <rect x="56" y="218" width="208" height="26" class="chip" /><text x="66" y="236"
+                    class="ts">T　通知範本</text>
+
+                <rect x="360" y="70" width="200" height="60" class="box core" />
+                <text x="460" y="96" text-anchor="middle" class="mono core-t">TeamsNotification</text>
+                <text x="460" y="116" text-anchor="middle" class="ts core-s">通知</text>
+                <rect x="620" y="70" width="200" height="60" class="box core" />
+                <text x="720" y="96" text-anchor="middle" class="mono core-t">TeamsDelivery</text>
+                <text x="720" y="116" text-anchor="middle" class="ts core-s">投遞紀錄</text>
+                <rect x="880" y="70" width="200" height="60" class="box core" />
+                <text x="980" y="96" text-anchor="middle" class="mono core-t">TeamsReply</text>
+                <text x="980" y="116" text-anchor="middle" class="ts core-s">回覆紀錄</text>
+
+                <rect x="620" y="220" width="200" height="60" class="box" />
+                <text x="720" y="246" text-anchor="middle" class="mono">TeamsEmployee</text>
+                <text x="720" y="266" text-anchor="middle" class="ts">員工 Teams 身分</text>
+
+                <rect x="360" y="340" width="200" height="50" class="box ext" />
+                <text x="460" y="362" text-anchor="middle" class="mono">dbo.Depart</text>
+                <text x="460" y="380" text-anchor="middle" class="ts">單位主檔・既有・唯讀</text>
+                <rect x="620" y="340" width="200" height="50" class="box ext" />
+                <text x="720" y="362" text-anchor="middle" class="mono">dbo.Employee</text>
+                <text x="720" y="380" text-anchor="middle" class="ts">員工主檔・既有・唯讀</text>
+            </svg>
+            <div class="linekey">
+                <span><s></s>外鍵：資料庫強制關聯（箭頭指向被參照的表）</span>
+                <span><s class="logic"></s>用代碼或編號參照，不建外鍵（不影響院內既有主檔）</span>
+            </div>
+        </section>
+
+        <!-- 05 資料表明細 -->
+        <section class="plate" id="s5">
+            <span class="fig">五</span>
+            <h2>資料表明細</h2>
+            <p class="cap">每張表說明：<b>一列代表什麼、什麼時候寫入、有哪些欄位、靠哪些規則防錯</b>。型別與長度為草案，實際以 DBA 審過的建表檔為準。</p>
+
+            <div class="common">
+                <div>
+                    <b>共通規範（院內建表格式）</b>
+                    <ul>
+                        <li>主鍵欄位 <code>&lt;名稱&gt;No</code>，自動編號（比照 <code>EmpNo</code>、<code>DepartNo</code>）。</li>
+                        <li>索引命名：主鍵 <code>&lt;表名&gt;Key0</code>，其他索引依序 <code>Key1</code>、<code>Key2</code>…（比照
+                            <code>Employee.sql</code>）。</li>
+                        <li>會給外部看到的識別碼另存 GUID，不讓外人猜到流水號。</li>
+                        <li>時間一律存台灣時間；「還沒發生」存 <code>2999/12/31</code>。</li>
+                        <li>每張表都有
+                            <code>CreateUser</code>・<code>CreateTime</code>・<code>UpdateUser</code>・<code>UpdateTime</code>。後台操作填平台管理者的員工編號；系統自動處理填
+                            <code>0</code>，來源介接系統記在通知上。</li>
+                        <li>以資料庫權限保護，不另外加密；介接系統金鑰只存無法還原的雜湊。</li>
+                    </ul>
+                </div>
+                <div>
+                    <b>建表命名示意</b>
+                    <pre class="ddl">create table TeamsReply
+(
+ ReplyNo     int identity(1,1) not null, <i>-- 主鍵欄位</i>
+ ReplyId     uniqueidentifier  not null, <i>-- 對外識別</i>
+ DeliveryNo  int               not null, <i>-- 屬於哪筆投遞</i>
+ ...
+ constraint TeamsReplyKey0 primary key (ReplyNo)
+);
+create unique index TeamsReplyKey1 on TeamsReply (ReplyId);
+create unique index TeamsReplyKey2 on TeamsReply (DeliveryNo, ReplierEmpNo);</pre>
+                </div>
+            </div>
+
+            <!-- TeamsSetting -->
+            <div class="tb cfg">
+                <header><b>平台設定</b><code>TeamsSetting</code><span>一列＝一個介接系統／頻道／回覆選項組／通知範本・約數十列</span></header>
+                <div class="bd">
+                    <div>
+                        <table class="fld">
+                            <tr>
+                                <td>SettingNo<span class="k pk">PK</span></td>
+                                <td class="t">int identity</td>
+                                <td>主鍵</td>
+                            </tr>
+                            <tr>
+                                <td>SettingType</td>
+                                <td class="t">char(1)</td>
+                                <td>S 介接系統／C 可發佈頻道／O 回覆選項組／T 通知範本</td>
+                            </tr>
+                            <tr>
+                                <td>Code</td>
+                                <td class="t">varchar(30)</td>
+                                <td>代碼，其他表用它引用；建立後不可修改，只能停用</td>
+                            </tr>
+                            <tr>
+                                <td>Name</td>
+                                <td class="t">nvarchar(50)</td>
+                                <td>顯示名稱</td>
+                            </tr>
+                            <tr>
+                                <td>IsActive</td>
+                                <td class="t">bit</td>
+                                <td>停用後不能再選用，歷史資料保留</td>
+                            </tr>
+                            <tr>
+                                <td>ApiKeyHash</td>
+                                <td class="t">char(64)</td>
+                                <td>介接系統金鑰的雜湊；其他類型為空白</td>
+                            </tr>
+                            <tr>
+                                <td>Content</td>
+                                <td class="t">nvarchar(max)</td>
+                                <td>各類型專屬內容（JSON），由資料服務解析檢查</td>
+                            </tr>
+                        </table>
+                    </div>
+                    <div>
+                        <dl>
+                            <dt>什麼時候寫入</dt>
+                            <dd>平台管理者在後台維護，幾乎不變動。</dd>
+                            <dt>Content 裡放什麼</dt>
+                            <dd>
+                                <table class="mini">
+                                    <tr>
+                                        <td>S 介接系統</td>
+                                        <td>回送網址與簽章密鑰、送回方式、人數上限、允許的發文單位／頻道／範本</td>
+                                    </tr>
+                                    <tr>
+                                        <td>C 可發佈頻道</td>
+                                        <td>對應工作單位、Teams 團隊與頻道識別</td>
+                                    </tr>
+                                    <tr>
+                                        <td>O 回覆選項組</td>
+                                        <td>1–5 個「顯示文字＋回傳值」、是否有「其他」</td>
+                                    </tr>
+                                    <tr>
+                                        <td>T 通知範本</td>
+                                        <td>私人或頻道、用哪個選項組（空＝純通知）、頻道回覆方式</td>
+                                    </tr>
+                                </table>
+                            </dd>
+                            <dt>防錯規則（索引）</dt>
+                            <dd>
+                                <div class="idx"><b>Key0</b> 主鍵 (SettingNo)<br><b>Key1</b> 不重複 (SettingType,
+                                    Code)<br><b>Key2</b> 不重複 (ApiKeyHash)，限非空白</div>
+                            </dd>
+                        </dl>
+                    </div>
+                </div>
+            </div>
+
+            <!-- TeamsNotification -->
+            <div class="tb">
+                <header><b>通知</b><code>TeamsNotification</code><span>一列＝一次發送（不論 1 人或全院）</span></header>
+                <div class="bd">
+                    <div>
+                        <table class="fld">
+                            <tr>
+                                <td>NotificationNo<span class="k pk">PK</span></td>
+                                <td class="t">int identity</td>
+                                <td>主鍵</td>
+                            </tr>
+                            <tr class="grp">
+                                <td colspan="3">誰建立</td>
+                            </tr>
+                            <tr>
+                                <td>NotificationId</td>
+                                <td class="t">uniqueidentifier</td>
+                                <td>對外通知編號，回給介接系統</td>
+                            </tr>
+                            <tr>
+                                <td>SystemCode</td>
+                                <td class="t">varchar(30)</td>
+                                <td>來源介接系統；後台建立為空白</td>
+                            </tr>
+                            <tr>
+                                <td>RequestId</td>
+                                <td class="t">varchar(100)</td>
+                                <td>介接系統的請求編號，防止重送建兩則</td>
+                            </tr>
+                            <tr class="grp">
+                                <td colspan="3">發什麼</td>
+                            </tr>
+                            <tr>
+                                <td>TemplateCode</td>
+                                <td class="t">varchar(30)</td>
+                                <td>使用的範本</td>
+                            </tr>
+                            <tr>
+                                <td>TargetType</td>
+                                <td class="t">tinyint</td>
+                                <td>1 私人／2 頻道（建立時自範本複製）</td>
+                            </tr>
+                            <tr>
+                                <td>ReplyMode</td>
+                                <td class="t">tinyint</td>
+                                <td>0 純通知／1 單一回覆／2 每人一次（同上）</td>
+                            </tr>
+                            <tr>
+                                <td>OptionsSnapshot</td>
+                                <td class="t">nvarchar(4000)</td>
+                                <td>選項清單快照 <code>[{顯示文字, 回傳值}…]</code>，不是卡片內容</td>
+                            </tr>
+                            <tr>
+                                <td>AllActiveEmployees</td>
+                                <td class="t">bit</td>
+                                <td>是否發給全部在職員工</td>
+                            </tr>
+                            <tr>
+                                <td>IssuingDepartNo</td>
+                                <td class="t">smallint</td>
+                                <td>發文單位；名稱顯示時從 dbo.Depart 取得</td>
+                            </tr>
+                            <tr>
+                                <td>Title</td>
+                                <td class="t">nvarchar(100)</td>
+                                <td>標題</td>
+                            </tr>
+                            <tr>
+                                <td>Body</td>
+                                <td class="t">nvarchar(2000)</td>
+                                <td>本文</td>
+                            </tr>
+                            <tr>
+                                <td>LinkUrl</td>
+                                <td class="t">varchar(1000)</td>
+                                <td>文件連結，只接受 HTTPS</td>
+                            </tr>
+                            <tr class="grp">
+                                <td colspan="3">排程與狀態</td>
+                            </tr>
+                            <tr>
+                                <td>ScheduledTime</td>
+                                <td class="t">datetime</td>
+                                <td>預定發送時間；立即發送＝建立時間</td>
+                            </tr>
+                            <tr>
+                                <td>StartedTime</td>
+                                <td class="t">datetime</td>
+                                <td>實際開始時間；2999/12/31＝未開始</td>
+                            </tr>
+                            <tr>
+                                <td>Status</td>
+                                <td class="t">tinyint</td>
+                                <td>1 排程中／2 發送中／3 完成／4 取消／5 整則不發送</td>
+                            </tr>
+                            <tr>
+                                <td>LeaseUntil</td>
+                                <td class="t">datetime</td>
+                                <td>排程認領期限，避免兩台主機同時處理</td>
+                            </tr>
+                        </table>
+                    </div>
+                    <div>
+                        <dl>
+                            <dt>什麼時候寫入</dt>
+                            <dd>介接系統或平台管理者建立時新增；開始發送、完成、取消時更新狀態。開始發送後內容不再改變。</dd>
+                            <dt>為什麼要快照</dt>
+                            <dd>建立當下把範本設定與選項清單複製一份。之後平台管理者改範本或選項，已建立的通知不受影響，介接系統也不會收到沒看過的回傳值。</dd>
+                            <dt>防錯規則（索引）</dt>
+                            <dd>
+                                <div class="idx"><b>Key0</b> 主鍵 (NotificationNo)<br><b>Key1</b> 不重複
+                                    (NotificationId)<br><b>Key2</b> 不重複 (SystemCode, RequestId)，限介接系統建立<br><b>Key3</b>
+                                    查詢用 (Status, ScheduledTime)：找出到期的排程</div>
+                            </dd>
+                        </dl>
+                    </div>
+                </div>
+            </div>
+
+            <!-- TeamsDelivery -->
+            <div class="tb">
+                <header><b>投遞紀錄</b><code>TeamsDelivery</code><span>一列＝一則通知送給一位員工或一個頻道・列數最多</span></header>
+                <div class="bd">
+                    <div>
+                        <table class="fld">
+                            <tr>
+                                <td>DeliveryNo<span class="k pk">PK</span></td>
+                                <td class="t">int identity</td>
+                                <td>主鍵</td>
+                            </tr>
+                            <tr class="grp">
+                                <td colspan="3">送給誰</td>
+                            </tr>
+                            <tr>
+                                <td>DeliveryId</td>
+                                <td class="t">uniqueidentifier</td>
+                                <td>卡片按鈕帶回的識別；也是送達結果的事件編號</td>
+                            </tr>
+                            <tr>
+                                <td>NotificationNo<span class="k fk">FK</span></td>
+                                <td class="t">int</td>
+                                <td>屬於哪則通知</td>
+                            </tr>
+                            <tr>
+                                <td>EmpNo</td>
+                                <td class="t">int</td>
+                                <td>私人通知的收件員工；頻道為 0</td>
+                            </tr>
+                            <tr>
+                                <td>ChannelCode</td>
+                                <td class="t">varchar(30)</td>
+                                <td>頻道代碼；私人為空白</td>
+                            </tr>
+                            <tr class="grp">
+                                <td colspan="3">送達結果</td>
+                            </tr>
+                            <tr>
+                                <td>Status</td>
+                                <td class="t">tinyint</td>
+                                <td>0 等待／1 已送達／2 失敗</td>
+                            </tr>
+                            <tr>
+                                <td>FailureReason</td>
+                                <td class="t">tinyint</td>
+                                <td>找不到員工／未安裝 App／Teams 拒絕／結果不明</td>
+                            </tr>
+                            <tr>
+                                <td>ConversationId</td>
+                                <td class="t">varchar(300)</td>
+                                <td>卡片所在的 Teams 對話</td>
+                            </tr>
+                            <tr>
+                                <td>MessageId</td>
+                                <td class="t">varchar(100)</td>
+                                <td>卡片在 Teams 的訊息編號，更新卡片用</td>
+                            </tr>
+                            <tr>
+                                <td>SentTime</td>
+                                <td class="t">datetime</td>
+                                <td>Teams 接受的時間</td>
+                            </tr>
+                            <tr>
+                                <td>AttemptCount</td>
+                                <td class="t">tinyint</td>
+                                <td>已嘗試次數（Teams 忙碌時有限次重試）</td>
+                            </tr>
+                            <tr>
+                                <td>AttemptStartTime</td>
+                                <td class="t">datetime</td>
+                                <td>最後一次嘗試開始</td>
+                            </tr>
+                            <tr>
+                                <td>AttemptEndTime</td>
+                                <td class="t">datetime</td>
+                                <td>最後一次嘗試結束；未結束且逾期＝結果不明</td>
+                            </tr>
+                            <tr>
+                                <td>LastHttpStatus</td>
+                                <td class="t">smallint</td>
+                                <td>最後一次回應代碼</td>
+                            </tr>
+                            <tr>
+                                <td>NextAttemptTime</td>
+                                <td class="t">datetime</td>
+                                <td>下次重試時間</td>
+                            </tr>
+                            <tr class="grp">
+                                <td colspan="3">回覆彙總與卡片更新</td>
+                            </tr>
+                            <tr>
+                                <td>ReplyCount</td>
+                                <td class="t">int</td>
+                                <td>已有幾人回覆</td>
+                            </tr>
+                            <tr>
+                                <td>ClosedTime</td>
+                                <td class="t">datetime</td>
+                                <td>單一回覆何時關閉</td>
+                            </tr>
+                            <tr>
+                                <td>CardRequestedTime</td>
+                                <td class="t">datetime</td>
+                                <td>最近一次要求更新卡片</td>
+                            </tr>
+                            <tr>
+                                <td>CardUpdatedTime</td>
+                                <td class="t">datetime</td>
+                                <td>最近一次完成更新；較舊就代表要更新</td>
+                            </tr>
+                            <tr>
+                                <td>CardAttemptCount</td>
+                                <td class="t">tinyint</td>
+                                <td>更新重試次數</td>
+                            </tr>
+                            <tr class="grp">
+                                <td colspan="3">送達結果送回原系統</td>
+                            </tr>
+                            <tr>
+                                <td>HookStatus</td>
+                                <td class="t">tinyint</td>
+                                <td>0 不需／1 待送／2 已送達／3 送交失敗</td>
+                            </tr>
+                            <tr>
+                                <td>HookAttemptCount</td>
+                                <td class="t">tinyint</td>
+                                <td>已送次數（最多 8 次）</td>
+                            </tr>
+                            <tr>
+                                <td>HookLastHttpStatus</td>
+                                <td class="t">smallint</td>
+                                <td>原系統最後一次回應</td>
+                            </tr>
+                            <tr>
+                                <td>HookNextTime</td>
+                                <td class="t">datetime</td>
+                                <td>下次送出時間</td>
+                            </tr>
+                            <tr class="grp">
+                                <td colspan="3">背景作業認領（三種作業各自認領，互不阻擋）</td>
+                            </tr>
+                            <tr>
+                                <td>SendLeaseUntil</td>
+                                <td class="t">datetime</td>
+                                <td>投遞</td>
+                            </tr>
+                            <tr>
+                                <td>CardLeaseUntil</td>
+                                <td class="t">datetime</td>
+                                <td>卡片更新</td>
+                            </tr>
+                            <tr>
+                                <td>HookLeaseUntil</td>
+                                <td class="t">datetime</td>
+                                <td>送回原系統</td>
+                            </tr>
+                        </table>
+                    </div>
+                    <div>
+                        <dl>
+                            <dt>什麼時候寫入</dt>
+                            <dd>建立通知（指定員工）或開始發送（全部在職員工）時新增；投遞、有人回覆、卡片更新、送回原系統時更新。</dd>
+                            <dt>設計重點</dt>
+                            <dd>一列同時承載四件事：<b>送達結果、回覆彙總、卡片更新、送達結果送回</b>。逐次重試明細不存資料庫，只記次數與最後一次結果。</dd>
+                            <dt>為什麼頻道也是一列</dt>
+                            <dd>「單一回覆」要每個頻道各自計算，第一位回覆是以這一列為單位判斷。</dd>
+                            <dt>防錯規則（索引）</dt>
+                            <dd>
+                                <div class="idx"><b>Key0</b> 主鍵 (DeliveryNo)<br><b>Key1</b> 不重複
+                                    (DeliveryId)<br><b>Key2</b> 不重複 (NotificationNo, EmpNo,
+                                    ChannelCode)：同一人／頻道只收一次<br><b>Key3</b> 查詢用 (Status, NextAttemptTime)<br><b>Key4</b>
+                                    查詢用 (HookStatus, HookNextTime)<br>檢查規則：員工與頻道恰好擇一</div>
+                            </dd>
+                        </dl>
+                    </div>
+                </div>
+            </div>
+
+            <!-- TeamsReply -->
+            <div class="tb">
+                <header><b>回覆紀錄</b><code>TeamsReply</code><span>一列＝一位員工對一筆投遞的一次有效回覆</span></header>
+                <div class="bd">
+                    <div>
+                        <table class="fld">
+                            <tr>
+                                <td>ReplyNo<span class="k pk">PK</span></td>
+                                <td class="t">int identity</td>
+                                <td>主鍵</td>
+                            </tr>
+                            <tr class="grp">
+                                <td colspan="3">誰回覆</td>
+                            </tr>
+                            <tr>
+                                <td>ReplyId</td>
+                                <td class="t">uniqueidentifier</td>
+                                <td>對外識別；也是回覆事件的事件編號</td>
+                            </tr>
+                            <tr>
+                                <td>DeliveryNo<span class="k fk">FK</span></td>
+                                <td class="t">int</td>
+                                <td>回覆哪一筆投遞</td>
+                            </tr>
+                            <tr>
+                                <td>ReplierEmpNo</td>
+                                <td class="t">int</td>
+                                <td>回覆者員工編號</td>
+                            </tr>
+                            <tr>
+                                <td>IsSingleReply</td>
+                                <td class="t">bit</td>
+                                <td>是否為單一回覆模式</td>
+                            </tr>
+                            <tr class="grp">
+                                <td colspan="3">回覆內容</td>
+                            </tr>
+                            <tr>
+                                <td>OptionValue</td>
+                                <td class="t">varchar(50)</td>
+                                <td>回傳值，原封不動給介接系統</td>
+                            </tr>
+                            <tr>
+                                <td>OptionLabel</td>
+                                <td class="t">nvarchar(40)</td>
+                                <td>員工看到的按鈕文字</td>
+                            </tr>
+                            <tr>
+                                <td>OtherText</td>
+                                <td class="t">nvarchar(500)</td>
+                                <td>選「其他」時的補充文字；不寫入日誌</td>
+                            </tr>
+                            <tr>
+                                <td>RepliedTime</td>
+                                <td class="t">datetime</td>
+                                <td>回覆時間（台灣時間）</td>
+                            </tr>
+                            <tr class="grp">
+                                <td colspan="3">回覆當下的單位（人事調動不改寫）</td>
+                            </tr>
+                            <tr>
+                                <td>WorkDepartNo</td>
+                                <td class="t">smallint</td>
+                                <td>工作單位</td>
+                            </tr>
+                            <tr>
+                                <td>WorkDepartName</td>
+                                <td class="t">nvarchar(40)</td>
+                                <td>工作單位名稱</td>
+                            </tr>
+                            <tr>
+                                <td>DepartNo</td>
+                                <td class="t">smallint</td>
+                                <td>細分單位</td>
+                            </tr>
+                            <tr>
+                                <td>DepartName</td>
+                                <td class="t">nvarchar(40)</td>
+                                <td>細分單位名稱</td>
+                            </tr>
+                            <tr class="grp">
+                                <td colspan="3">回覆送回原系統</td>
+                            </tr>
+                            <tr>
+                                <td>HookStatus</td>
+                                <td class="t">tinyint</td>
+                                <td>0 不需／1 待送／2 已送達／3 送交失敗</td>
+                            </tr>
+                            <tr>
+                                <td>HookAttemptCount</td>
+                                <td class="t">tinyint</td>
+                                <td>已送次數（最多 8 次）</td>
+                            </tr>
+                            <tr>
+                                <td>HookLastHttpStatus</td>
+                                <td class="t">smallint</td>
+                                <td>原系統最後一次回應</td>
+                            </tr>
+                            <tr>
+                                <td>HookNextTime</td>
+                                <td class="t">datetime</td>
+                                <td>下次送出時間</td>
+                            </tr>
+                            <tr>
+                                <td>HookLeaseUntil</td>
+                                <td class="t">datetime</td>
+                                <td>送出作業認領期限</td>
+                            </tr>
+                        </table>
+                    </div>
+                    <div>
+                        <dl>
+                            <dt>什麼時候寫入</dt>
+                            <dd>員工按下卡片按鈕並通過檢查時新增；之後只更新「送回原系統」的欄位，回覆內容不再改。</dd>
+                            <dt>設計重點</dt>
+                            <dd>保存回覆<b>當下</b>的按鈕文字、回傳值與回覆者單位。送回原系統的內容直接由這一列組出；這一列不會變，重送內容永遠一致。</dd>
+                            <dt>防錯規則（索引，最重要的兩條）</dt>
+                            <dd>
+                                <div class="idx"><b>Key0</b> 主鍵 (ReplyNo)<br><b>Key1</b> 不重複 (ReplyId)<br><b>Key2</b>
+                                    不重複 (DeliveryNo, ReplierEmpNo)：每人一次、連點不重算<br><b>Key3</b> 不重複
+                                    (DeliveryNo)，限單一回覆：兩人同時按只有一人成功<br><b>Key4</b> 查詢用 (HookStatus, HookNextTime)</div>
+                            </dd>
+                        </dl>
+                    </div>
+                </div>
+            </div>
+
+            <!-- TeamsEmployee -->
+            <div class="tb cfg">
+                <header><b>員工 Teams 身分</b><code>TeamsEmployee</code><span>一列＝一個員工編號</span></header>
+                <div class="bd">
+                    <div>
+                        <table class="fld">
+                            <tr>
+                                <td>EmpNo<span class="k pk">PK</span></td>
+                                <td class="t">int</td>
+                                <td>員工編號，與員工主檔一對一（不自動編號）</td>
+                            </tr>
+                            <tr class="grp">
+                                <td colspan="3">Teams 帳號</td>
+                            </tr>
+                            <tr>
+                                <td>Upn</td>
+                                <td class="t">varchar(100)</td>
+                                <td>公司帳號 <code>csh{員工代碼}@csh.org.tw</code></td>
+                            </tr>
+                            <tr>
+                                <td>AadObjectId</td>
+                                <td class="t">uniqueidentifier</td>
+                                <td>Microsoft 帳號識別碼；員工按按鈕時用它反查</td>
+                            </tr>
+                            <tr>
+                                <td>BindingStatus</td>
+                                <td class="t">tinyint</td>
+                                <td>有效／查無／不一致</td>
+                            </tr>
+                            <tr>
+                                <td>VerifiedTime</td>
+                                <td class="t">datetime</td>
+                                <td>何時查證</td>
+                            </tr>
+                            <tr class="grp">
+                                <td colspan="3">個人對話位置（不存對話內容）</td>
+                            </tr>
+                            <tr>
+                                <td>TenantId</td>
+                                <td class="t">uniqueidentifier</td>
+                                <td>公司的 Microsoft 租戶</td>
+                            </tr>
+                            <tr>
+                                <td>ConversationId</td>
+                                <td class="t">varchar(300)</td>
+                                <td>與 App 的個人對話；未建立為空白</td>
+                            </tr>
+                            <tr>
+                                <td>ServiceUrl</td>
+                                <td class="t">varchar(300)</td>
+                                <td>Teams 服務位址</td>
+                            </tr>
+                        </table>
+                    </div>
+                    <div>
+                        <dl>
+                            <dt>什麼時候寫入</dt>
+                            <dd>第一次要發給該員工時查 Microsoft 帳號目錄後新增；第一次建立個人對話時補上對話位置。</dd>
+                            <dt>為什麼需要這張表</dt>
+                            <dd>它是查詢結果的快取。沒有它，每次發送都要即時查 Microsoft、每次按按鈕都要即時反查員工；全院通知一次就是數千次外部呼叫，容易被限流、變慢。</dd>
+                            <dt>防錯規則（索引）</dt>
+                            <dd>
+                                <div class="idx"><b>Key0</b> 主鍵 (EmpNo)<br><b>Key1</b> 查詢用 (AadObjectId)：按鈕回傳時反查員工</div>
+                            </dd>
+                        </dl>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <footer>
+            <span>CSH Teams 通知平台・系統架構與資料表（主管討論用）</span>
+            <span>2026-10-20</span>
+        </footer>
+    </main>
+</body>
+
+</html>
