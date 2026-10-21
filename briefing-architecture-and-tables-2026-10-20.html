@@ -797,6 +797,91 @@
             width: 30%
         }
 
+        .fmt {
+            background: #fff;
+            border: 1px solid var(--line);
+            border-left: 5px solid var(--teal);
+            margin-top: 20px;
+            padding: 14px 16px
+        }
+
+        .fmt h4 {
+            margin: 0 0 4px;
+            font-family: var(--serif);
+            font-size: 17px
+        }
+
+        .fmt>p {
+            margin: 0 0 10px;
+            font-size: 13.5px;
+            color: var(--muted)
+        }
+
+        .fmt-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px
+        }
+
+        .fmt-grid>div {
+            min-width: 0
+        }
+
+        .rule {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 12.8px;
+            table-layout: fixed
+        }
+
+        .rule th {
+            background: var(--ink);
+            color: var(--paper);
+            text-align: left;
+            padding: 5px 8px;
+            font-weight: 500
+        }
+
+        .rule td {
+            padding: 5px 8px;
+            border-top: 1px solid #efe7d8;
+            vertical-align: top;
+            overflow-wrap: anywhere
+        }
+
+        .rule td:first-child {
+            font-family: var(--mono);
+            font-size: 12px
+        }
+
+        .jsonbox {
+            margin: 0;
+            padding: 10px 12px;
+            background: #1c2220;
+            color: #e9e2d2;
+            font-family: var(--mono);
+            font-size: 11.8px;
+            line-height: 1.6;
+            white-space: pre-wrap;
+            overflow-wrap: anywhere
+        }
+
+        .jsonbox i {
+            color: #9fd3c9;
+            font-style: normal
+        }
+
+        .jsonbox s {
+            color: #f2a49d;
+            text-decoration: none
+        }
+
+        @media (max-width:1000px) {
+            .fmt-grid {
+                grid-template-columns: 1fr
+            }
+        }
+
         footer {
             margin-top: 52px;
             font-size: 12px;
@@ -1047,7 +1132,7 @@
             <div class="journey">
                 <div class="st">
                     <h4>建立</h4>
-                    <p>介接系統指定範本、對象、標題與內容，呼叫通知 API。平台檢查是否在授權範圍內；重送同一請求不會建第二則。</p>
+                    <p>介接系統指定對象、標題、內容與回覆選項，呼叫通知 API。平台檢查是否在授權範圍內、選項格式是否正確；重送同一請求不會建第二則。</p>
                     <div class="eg">簽核系統：通知王主任「請核准請假單」</div>
                     <div class="tb-used">TeamsNotification・TeamsDelivery</div>
                 </div>
@@ -1149,16 +1234,16 @@
                 <div class="dt">
                     <h4>平台設定<small>TeamsSetting</small></h4>
                     <div class="body">
-                        <p>平台管理者在後台維護的設定：介接系統、可發佈頻道、回覆選項組、通知範本。</p>
+                        <p>平台管理者在後台維護的設定：介接系統、可發佈頻道。</p>
                         <p>總量只有數十筆。</p>
                     </div>
-                    <div class="like">像「規則手冊」：誰能發、能發到哪、卡片長什麼樣。</div>
+                    <div class="like">像「規則手冊」：誰能發、能發到哪。</div>
                 </div>
                 <div class="dt core">
                     <h4>通知<small>TeamsNotification</small></h4>
                     <div class="body">
-                        <p>每次發送一筆：誰建立的、標題內容、發文單位、用哪個範本、排程時間、目前狀態。</p>
-                        <p>建立當下把選項清單記下來，之後範本改了也不影響。</p>
+                        <p>每次發送一筆：誰建立的、標題內容、發文單位、回覆選項、排程時間、目前狀態。</p>
+                        <p>回覆選項由介接系統每次帶入，隨通知保存、不再變動。</p>
                     </div>
                     <div class="like">像「發文單」：這次要發什麼。</div>
                 </div>
@@ -1202,7 +1287,6 @@
 
                 <text x="430" y="30" text-anchor="middle" class="lbl">頻道代碼</text>
                 <text x="321" y="122" text-anchor="middle" class="lbl">系統代碼</text>
-                <text x="321" y="137" text-anchor="middle" class="lbl">範本代碼</text>
                 <text x="591" y="92" text-anchor="middle" class="lbl">FK</text>
                 <text x="851" y="92" text-anchor="middle" class="lbl">FK</text>
                 <text x="728" y="180" class="lbl">員工編號</text>
@@ -1210,17 +1294,13 @@
                 <text x="468" y="240" class="lbl">發文單位</text>
                 <text x="988" y="250" class="lbl">回覆者</text>
 
-                <rect x="40" y="60" width="240" height="200" class="box" />
+                <rect x="40" y="60" width="240" height="136" class="box" />
                 <text x="160" y="88" text-anchor="middle" class="mono">TeamsSetting</text>
                 <text x="160" y="106" text-anchor="middle" class="ts">平台設定（依類型分列）</text>
                 <rect x="56" y="122" width="208" height="26" class="chip" /><text x="66" y="140"
                     class="ts">S　介接系統（含允許範圍）</text>
                 <rect x="56" y="154" width="208" height="26" class="chip" /><text x="66" y="172"
                     class="ts">C　可發佈頻道</text>
-                <rect x="56" y="186" width="208" height="26" class="chip" /><text x="66" y="204"
-                    class="ts">O　回覆選項組（含選項）</text>
-                <rect x="56" y="218" width="208" height="26" class="chip" /><text x="66" y="236"
-                    class="ts">T　通知範本</text>
 
                 <rect x="360" y="70" width="200" height="60" class="box core" />
                 <text x="460" y="96" text-anchor="middle" class="mono core-t">TeamsNotification</text>
@@ -1261,12 +1341,14 @@
                     <ul>
                         <li>主鍵欄位 <code>&lt;名稱&gt;No</code>，自動編號（比照 <code>EmpNo</code>、<code>DepartNo</code>）。</li>
                         <li>索引命名：主鍵 <code>&lt;表名&gt;Key0</code>，其他索引依序 <code>Key1</code>、<code>Key2</code>…（比照
-                            <code>Employee.sql</code>）。</li>
+                            <code>Employee.sql</code>）。
+                        </li>
                         <li>會給外部看到的識別碼另存 GUID，不讓外人猜到流水號。</li>
                         <li>時間一律存台灣時間；「還沒發生」存 <code>2999/12/31</code>。</li>
                         <li>每張表都有
                             <code>CreateUser</code>・<code>CreateTime</code>・<code>UpdateUser</code>・<code>UpdateTime</code>。後台操作填平台管理者的員工編號；系統自動處理填
-                            <code>0</code>，來源介接系統記在通知上。</li>
+                            <code>0</code>，來源介接系統記在通知上。
+                        </li>
                         <li>以資料庫權限保護，不另外加密；介接系統金鑰只存無法還原的雜湊。</li>
                     </ul>
                 </div>
@@ -1287,7 +1369,7 @@ create unique index TeamsReplyKey2 on TeamsReply (DeliveryNo, ReplierEmpNo);</pr
 
             <!-- TeamsSetting -->
             <div class="tb cfg">
-                <header><b>平台設定</b><code>TeamsSetting</code><span>一列＝一個介接系統／頻道／回覆選項組／通知範本・約數十列</span></header>
+                <header><b>平台設定</b><code>TeamsSetting</code><span>一列＝一個介接系統或一個可發佈頻道・約數十列</span></header>
                 <div class="bd">
                     <div>
                         <table class="fld">
@@ -1299,7 +1381,7 @@ create unique index TeamsReplyKey2 on TeamsReply (DeliveryNo, ReplierEmpNo);</pr
                             <tr>
                                 <td>SettingType</td>
                                 <td class="t">char(1)</td>
-                                <td>S 介接系統／C 可發佈頻道／O 回覆選項組／T 通知範本</td>
+                                <td>S 介接系統／C 可發佈頻道</td>
                             </tr>
                             <tr>
                                 <td>Code</td>
@@ -1337,19 +1419,11 @@ create unique index TeamsReplyKey2 on TeamsReply (DeliveryNo, ReplierEmpNo);</pr
                                 <table class="mini">
                                     <tr>
                                         <td>S 介接系統</td>
-                                        <td>回送網址與簽章密鑰、送回方式、人數上限、允許的發文單位／頻道／範本</td>
+                                        <td>回送網址與簽章密鑰、送回方式、人數上限、允許的發文單位／頻道</td>
                                     </tr>
                                     <tr>
                                         <td>C 可發佈頻道</td>
                                         <td>對應工作單位、Teams 團隊與頻道識別</td>
-                                    </tr>
-                                    <tr>
-                                        <td>O 回覆選項組</td>
-                                        <td>1–5 個「顯示文字＋回傳值」、是否有「其他」</td>
-                                    </tr>
-                                    <tr>
-                                        <td>T 通知範本</td>
-                                        <td>私人或頻道、用哪個選項組（空＝純通知）、頻道回覆方式</td>
                                     </tr>
                                 </table>
                             </dd>
@@ -1396,24 +1470,19 @@ create unique index TeamsReplyKey2 on TeamsReply (DeliveryNo, ReplierEmpNo);</pr
                                 <td colspan="3">發什麼</td>
                             </tr>
                             <tr>
-                                <td>TemplateCode</td>
-                                <td class="t">varchar(30)</td>
-                                <td>使用的範本</td>
-                            </tr>
-                            <tr>
                                 <td>TargetType</td>
                                 <td class="t">tinyint</td>
-                                <td>1 私人／2 頻道（建立時自範本複製）</td>
+                                <td>1 私人／2 頻道（依目標判斷：帶員工為私人、帶頻道為頻道）</td>
                             </tr>
                             <tr>
                                 <td>ReplyMode</td>
                                 <td class="t">tinyint</td>
-                                <td>0 純通知／1 單一回覆／2 每人一次（同上）</td>
+                                <td>0 純通知／1 單一回覆／2 每人一次；頻道由 API 帶入、私人固定 2</td>
                             </tr>
                             <tr>
-                                <td>OptionsSnapshot</td>
+                                <td>ReplyOptions</td>
                                 <td class="t">nvarchar(4000)</td>
-                                <td>選項清單快照 <code>[{顯示文字, 回傳值}…]</code>，不是卡片內容</td>
+                                <td>回覆選項清單 <code>[{顯示文字, 回傳值}…]</code>＋是否有「其他」；由 API 帶入，不是卡片內容</td>
                             </tr>
                             <tr>
                                 <td>AllActiveEmployees</td>
@@ -1469,8 +1538,8 @@ create unique index TeamsReplyKey2 on TeamsReply (DeliveryNo, ReplierEmpNo);</pr
                         <dl>
                             <dt>什麼時候寫入</dt>
                             <dd>介接系統或平台管理者建立時新增；開始發送、完成、取消時更新狀態。開始發送後內容不再改變。</dd>
-                            <dt>為什麼要快照</dt>
-                            <dd>建立當下把範本設定與選項清單複製一份。之後平台管理者改範本或選項，已建立的通知不受影響，介接系統也不會收到沒看過的回傳值。</dd>
+                            <dt>回覆選項為什麼存在通知上</dt>
+                            <dd>選項由介接系統每次帶入（1–5 個，可加「其他」），平台檢查格式後存在這則通知上。產生卡片、更新卡片、檢查員工按下的回傳值都以它為準；建立後不再變動。</dd>
                             <dt>防錯規則（索引）</dt>
                             <dd>
                                 <div class="idx"><b>Key0</b> 主鍵 (NotificationNo)<br><b>Key1</b> 不重複
@@ -1478,6 +1547,80 @@ create unique index TeamsReplyKey2 on TeamsReply (DeliveryNo, ReplierEmpNo);</pr
                                     查詢用 (Status, ScheduledTime)：找出到期的排程</div>
                             </dd>
                         </dl>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ReplyOptions 格式 -->
+            <div class="fmt">
+                <h4>ReplyOptions 的 JSON 格式</h4>
+                <p>介接系統建立通知時帶 <code>options</code>、<code>allowOther</code>；平台檢查通過後，原樣存進
+                    <code>TeamsNotification.ReplyOptions</code>。<code>replyMode</code> 另存 <code>ReplyMode</code> 欄位，不在這個
+                    JSON 裡。
+                </p>
+                <div class="fmt-grid">
+                    <div>
+                        <table class="rule">
+                            <tr>
+                                <th style="width:30%">欄位</th>
+                                <th style="width:16%">型別</th>
+                                <th>規則</th>
+                            </tr>
+                            <tr>
+                                <td>options</td>
+                                <td>陣列</td>
+                                <td>0–5 個，依陣列順序顯示成按鈕；不帶或空陣列＝純通知</td>
+                            </tr>
+                            <tr>
+                                <td>options[].label</td>
+                                <td>字串</td>
+                                <td>必填。員工看到的按鈕文字；1–40 字、不可只有空白；以純文字顯示</td>
+                            </tr>
+                            <tr>
+                                <td>options[].value</td>
+                                <td>字串</td>
+                                <td>必填。送回介接系統的回傳值；1–50 字；同一則內不可重複；不可使用保留值 <code>OTHER</code></td>
+                            </tr>
+                            <tr>
+                                <td>allowOther</td>
+                                <td>布林</td>
+                                <td>選填，預設 <code>false</code>。<code>true</code> 時卡片多一顆「其他」，回傳值固定 <code>OTHER</code>，員工須輸入
+                                    1–500 字；至少要有 1 個 options</td>
+                            </tr>
+                            <tr>
+                                <td>replyMode</td>
+                                <td>字串</td>
+                                <td>不在
+                                    ReplyOptions。只用於頻道通知且有選項時必填：<code>SingleReply</code>／<code>PerPerson</code>；私人通知不帶
+                                </td>
+                            </tr>
+                        </table>
+                    </div>
+                    <div>
+                        <pre class="jsonbox"><i>-- ① API 請求（節錄）：私人通知・核准／退回＋其他</i>
+{
+  "requestId": "SIGN-20261021-0001",
+  "empNos": [1234],
+  "title": "請核准請假單",
+  "options": [
+    { "label": "核准", "value": "APPROVE" },
+    { "label": "退回", "value": "REJECT" }
+  ],
+  "allowOther": true
+}
+
+<i>-- ② 存入 TeamsNotification.ReplyOptions</i>
+{"allowOther":true,"options":[{"label":"核准","value":"APPROVE"},{"label":"退回","value":"REJECT"}]}
+
+<i>-- ③ 頻道通知・單一回覆（replyMode 存 ReplyMode=1）</i>
+{"channelCodes":["IT-NOTICE"],"replyMode":"SingleReply",
+ "options":[{"label":"已處理","value":"DONE"}]}
+
+<i>-- ④ 純通知：不帶 options，ReplyOptions 存</i>
+{"allowOther":false,"options":[]}
+
+<s>-- ✗ 會被拒絕：超過 5 個、value 重複、value 用 OTHER、label 空白、
+--   頻道有選項卻沒帶 replyMode、allowOther=true 但沒有 options</s></pre>
                     </div>
                 </div>
             </div>
