@@ -971,7 +971,7 @@
         <header class="hero">
             <div>
                 <h1><small>CSH TEAMS 通知平台</small>系統架構與資料表</h1>
-                <div class="meta">2026-10-20（2026-10-22 補附件）　｜　<b>主管討論用</b>　｜　系統全貌、通知流程、使用情境、資料表設計</div>
+                <div class="meta">2026-10-20（2026-10-22 補附件、2026-10-27 補決定）　｜　<b>主管討論用</b>　｜　系統全貌、通知流程、使用情境、資料表設計</div>
                 <nav class="toc" aria-label="目錄">
                     <a href="#s1"><b>01</b>系統架構</a>
                     <a href="#s2"><b>02</b>通知旅程</a>
@@ -1116,19 +1116,19 @@
             </div>
             <ul class="keys">
                 <li><i>1</i><span>員工在 Teams 收到通知卡片、按下按鈕。</span></li>
-                <li><i>2</i><span>Teams 把按鈕點擊送進來，平台先驗證確實來自 Microsoft。<b>這是唯一對外入口。</b></span></li>
+                <li><i>2</i><span>Teams 把按鈕點擊送進來，平台先驗證確實來自 Microsoft。<b>這是唯一對外入口。</b>其他路徑除了 WAF 擋住，主程式內也再檢查一次：只接受設定檔列出的內網網段。</span></li>
                 <li><i>3</i><span>平台主動把卡片送到個人對話或頻道，並在有人回覆後更新原卡片。</span></li>
-                <li><i>4</i><span>用員工代碼推出公司帳號（<code>csh{員工代碼}@csh.org.tw</code>），查出對應的 Teams 帳號。</span></li>
+                <li><i>4</i><span>用員工代碼推出公司帳號（<code>csh{員工代碼}@csh.org.tw</code>），查出對應的 Teams 帳號。頻道成員第一次按按鈕時則反過來：依 Microsoft 帳號識別碼（Object ID）查出公司帳號，再對到在職員工。</span></li>
                 <li><i>5</i><span>介接系統帶金鑰呼叫通知 API：建立（可指定發送時間）、取消尚未開始的通知、查詢結果；有附件時先以 <code>POST /attachments</code> 上傳取得附件編號，建立通知時帶 <code>attachmentIds[]</code>。</span></li>
-                <li><i>6</i><span>回覆與送達結果附防偽簽章送回介接系統；暫時送不到會依間隔自動重送。</span></li>
-                <li><i>7</i><span>平台管理者維護設定，也能在後台做介接系統能做的事：發通知、排程、修改或取消、查看回覆。</span></li>
+                <li><i>6</i><span>三種事件（通知回覆、發送結果、通知未發送）附防偽簽章送回介接系統；暫時送不到會依間隔自動重送。</span></li>
+                <li><i>7</i><span>平台管理者維護設定，也能在後台做介接系統能做的事：發通知、排程、修改或取消、查看回覆。白名單與後台人數上限放主程式設定檔，修改需重新部署。</span></li>
                 <li><i>8</i><span>主程式透過內網呼叫資料服務，呼叫要帶金鑰；金鑰放在密鑰存放處，不寫在設定檔。</span></li>
-                <li><i>9</i><span>防重複、搶第一位回覆等判斷，都在資料服務的單一交易與資料庫規則內完成。</span></li>
+                <li><i>9</i><span>防重複、搶第一位回覆等判斷，都在資料服務的單一交易與資料庫規則內完成；認領期限與到期判斷也一律以資料服務的時間計算，主程式不自己算。</span></li>
                 <li><i>10</i><span>資料服務經 Microsoft Graph 把附件上傳到平台專用的 SharePoint 文件庫，開始發送時依收件者授與檢視權限。App 只申請 <code>Sites.Selected</code>，只授權這一個網站（角色 <code>fullcontrol</code>）。</span></li>
             </ul>
 
             <div class="callouts">
-                <div class="callout"><b>對外只開一扇門</b>只有 Teams 的按鈕回傳能從外部進來；通知 API、後台、資料服務都只在內網。</div>
+                <div class="callout"><b>對外只開一扇門</b>只有 Teams 的按鈕回傳能從外部進來；通知 API、後台、資料服務都只在內網。防火牆設定錯誤時，主程式內的內網網段檢查仍會擋下。</div>
                 <div class="callout"><b>資料統一由資料服務處理</b>主程式不直接連資料庫，與院內其他系統（例如文件辨識系統）的分層方式相同，方便維運與稽核。</div>
                 <div class="callout"><b>資料放在院內標準資料庫</b>使用院內建表格式，建表與結構異動由 DBA 執行。員工與單位資料直接讀取院內主檔，不另外複製。附件檔案本體存在平台專用 SharePoint，資料庫只存檔名、大小等資訊。</div>
             </div>
@@ -1142,7 +1142,7 @@
             <div class="journey">
                 <div class="st">
                     <h4>建立</h4>
-                    <p>介接系統指定對象、標題、內容與回覆選項（有附件時先上傳、再帶入附件編號），呼叫通知 API。平台檢查是否在授權範圍內、選項格式是否正確、附件是否為自己上傳；重送同一請求不會建第二則。</p>
+                    <p>介接系統指定對象、標題、內容與回覆選項（有附件時先上傳、再帶入附件編號），呼叫通知 API。平台檢查是否在授權範圍內、選項格式是否正確、附件是否為自己上傳；重送同一請求不會建第二則（後台連點「送出」或瀏覽器重送表單也一樣）。</p>
                     <div class="eg">簽核系統：通知王主任「請核准請假單」</div>
                     <div class="tb-used">TeamsNotification・TeamsDelivery・TeamsAttachment</div>
                 </div>
@@ -1154,19 +1154,19 @@
                 </div>
                 <div class="st">
                     <h4>找人並發送</h4>
-                    <p>用員工代碼找到 Teams 帳號；有附件時先授與檢視權限，再把卡片送到個人對話或頻道；每位收件者分別記錄成功或失敗。</p>
+                    <p>開始時重新檢查指定員工是否在職，排程期間離職者記為失敗「找不到員工」，其他人照常；超過人數上限或頻道已停用則整則不發送，並送「通知未發送」事件回介接系統。用員工代碼找到 Teams 帳號；有附件時先授與檢視權限，再把卡片送到個人對話或頻道；每位收件者分別記錄成功或失敗。</p>
                     <div class="eg">王主任的 Teams 跳出卡片</div>
-                    <div class="tb-used">TeamsEmployee・TeamsDelivery</div>
+                    <div class="tb-used">TeamsNotification・TeamsEmployee・TeamsDelivery</div>
                 </div>
                 <div class="st">
                     <h4>員工回覆</h4>
-                    <p>員工按卡片上的按鈕。平台記下誰、在哪個單位、選了什麼、何時。</p>
+                    <p>員工按卡片上的按鈕。平台記下誰、在哪個單位、選了什麼、何時。頻道成員第一次按、查不到身分時，即時向 Microsoft 反查並記住；反查失敗只提示本人「暫時無法確認身分，請稍後再試」。</p>
                     <div class="eg">王主任按「核准」</div>
-                    <div class="tb-used">TeamsReply・TeamsDelivery</div>
+                    <div class="tb-used">TeamsReply・TeamsDelivery・TeamsEmployee</div>
                 </div>
                 <div class="st">
                     <h4>更新卡片</h4>
-                    <p>卡片改成「已回覆」，其他裝置或頻道成員也看到最新狀態。</p>
+                    <p>卡片改成「已回覆」，其他裝置或頻道成員也看到最新狀態。多次失敗則放棄，後台顯示「卡片更新失敗」。</p>
                     <div class="eg">卡片顯示「您已於 10月20日 09:30 回覆：核准」</div>
                     <div class="tb-used">TeamsDelivery</div>
                 </div>
@@ -1221,7 +1221,7 @@
                     <tr>
                         <td>排程發送</td>
                         <td>指定時間自動送達。介接系統呼叫時帶入發送時間即可，不必自己等時間到再呼叫。</td>
-                        <td>開始前可取消（API 或後台）、可修改（後台），開始後鎖定；服務中斷恢復後立即補發。「全部在職員工」在發送當下才決定名單。</td>
+                        <td>開始前可取消（API 或後台）、可修改（後台），開始後鎖定；服務中斷恢復後立即補發。「全部在職員工」在發送當下才決定名單；指定員工在發送當下重新檢查在職，已離職者標示「找不到員工」。</td>
                     </tr>
                     <tr>
                         <td>員工自己打字</td>
@@ -1257,7 +1257,7 @@
                 <div class="dt core">
                     <h4>通知<small>TeamsNotification</small></h4>
                     <div class="body">
-                        <p>每次發送一筆：誰建立的、標題內容、發文單位、回覆選項、排程時間、目前狀態。</p>
+                        <p>每次發送一筆：誰建立的、標題內容、發文單位、回覆選項、排程時間、目前狀態；整則未發送時記錄原因並通知原系統。</p>
                         <p>回覆選項由介接系統每次帶入，隨通知保存、不再變動。</p>
                     </div>
                     <div class="like">像「發文單」：這次要發什麼。</div>
@@ -1375,7 +1375,7 @@
                             <code>Employee.sql</code>）。
                         </li>
                         <li>會給外部看到的識別碼另存 GUID，不讓外人猜到流水號。</li>
-                        <li>時間一律存台灣時間；「還沒發生」存 <code>2999/12/31</code>。</li>
+                        <li>時間一律存台灣時間；「還沒發生」存 <code>2999/12/31</code>。認領期限與到期判斷一律由資料服務以自己的時間計算，主程式不自己算。</li>
                         <li>交易類資料表都有
                             <code>CreateUser</code>・<code>CreateTime</code>・<code>UpdateUser</code>・<code>UpdateTime</code>；設定類（平台設定）只有
                             <code>UpdateUser</code>・<code>UpdateTime</code>。後台操作填平台管理者的員工編號；系統自動處理填
@@ -1468,7 +1468,7 @@ create unique index TeamsReplyKey2 on TeamsReply (DeliveryNo, ReplierEmpNo);</pr
                                     </tr>
                                     <tr>
                                         <td>C 可發佈頻道</td>
-                                        <td>對應工作單位、Teams 團隊與頻道識別</td>
+                                        <td>對應工作單位、Teams 團隊與頻道識別、Teams 服務位址 <code>serviceUrl</code>（新增時預先帶入院內租戶的值，來自主程式設定檔，通常不用改；「頻道測試核准」時驗證）</td>
                                     </tr>
                                 </table>
                             </dd>
@@ -1499,7 +1499,7 @@ create unique index TeamsReplyKey2 on TeamsReply (DeliveryNo, ReplierEmpNo);</pr
                             <tr>
                                 <td>NotificationId</td>
                                 <td class="t">uniqueidentifier</td>
-                                <td>對外通知編號，回給介接系統</td>
+                                <td>對外通知編號，回給介接系統；也是「通知未發送」的事件編號</td>
                             </tr>
                             <tr>
                                 <td>SystemCode</td>
@@ -1509,7 +1509,7 @@ create unique index TeamsReplyKey2 on TeamsReply (DeliveryNo, ReplierEmpNo);</pr
                             <tr>
                                 <td>RequestId</td>
                                 <td class="t">varchar(100)</td>
-                                <td>介接系統的請求編號，防止重送建兩則</td>
+                                <td>請求編號，防止重送建兩則；介接系統由 API 帶入，後台在表單開啟時產生一次性編號</td>
                             </tr>
                             <tr class="grp">
                                 <td colspan="3">發什麼</td>
@@ -1573,9 +1573,42 @@ create unique index TeamsReplyKey2 on TeamsReply (DeliveryNo, ReplierEmpNo);</pr
                                 <td>1 排程中／2 發送中／3 完成／4 取消／5 整則不發送</td>
                             </tr>
                             <tr>
+                                <td>FailReason</td>
+                                <td class="t">tinyint</td>
+                                <td>整則不發送的原因：0 無／1 超過人數上限／2 頻道已停用（可擴充）</td>
+                            </tr>
+                            <tr>
                                 <td>LeaseUntil</td>
                                 <td class="t">datetime</td>
                                 <td>排程認領期限，避免兩台主機同時處理</td>
+                            </tr>
+                            <tr class="grp">
+                                <td colspan="3">整則未發送事件送回原系統</td>
+                            </tr>
+                            <tr>
+                                <td>HookStatus</td>
+                                <td class="t">tinyint</td>
+                                <td>0 不需／1 待送／2 已送達／3 送交失敗；後台建立的通知固定為 0</td>
+                            </tr>
+                            <tr>
+                                <td>HookAttemptCount</td>
+                                <td class="t">tinyint</td>
+                                <td>已送次數（最多 8 次）</td>
+                            </tr>
+                            <tr>
+                                <td>HookLastHttpStatus</td>
+                                <td class="t">smallint</td>
+                                <td>原系統最後一次回應</td>
+                            </tr>
+                            <tr>
+                                <td>HookNextTime</td>
+                                <td class="t">datetime</td>
+                                <td>下次送出時間</td>
+                            </tr>
+                            <tr>
+                                <td>HookLeaseUntil</td>
+                                <td class="t">datetime</td>
+                                <td>送交認領期限</td>
                             </tr>
                             <tr class="grp">
                                 <td colspan="3">稽核欄位</td>
@@ -1595,14 +1628,16 @@ create unique index TeamsReplyKey2 on TeamsReply (DeliveryNo, ReplierEmpNo);</pr
                     <div>
                         <dl>
                             <dt>什麼時候寫入</dt>
-                            <dd>介接系統或平台管理者建立時新增；開始發送、完成、取消時更新狀態。開始發送後內容不再改變。</dd>
+                            <dd>介接系統或平台管理者建立時新增；開始發送、完成、取消時更新狀態。開始發送後內容不再改變。開始時若超過人數上限或頻道已停用，整則不發送、記錄 FailReason；由介接系統建立的同時設為待送「通知未發送」事件。</dd>
+                            <dt>事件共三種</dt>
+                            <dd>通知回覆（存在 TeamsReply）、發送結果（存在 TeamsDelivery）、通知未發送（存在這張表）。整則不發送時一筆投遞都不會產生，沒有這個事件，只用 Webhook 的介接系統會永遠等不到結果。後台建立的通知仍不送事件。</dd>
                             <dt>回覆選項為什麼存在通知上</dt>
                             <dd>選項由介接系統每次帶入（1–5 個，可加「其他」），平台檢查格式後存在這則通知上。產生卡片、更新卡片、檢查員工按下的回傳值都以它為準；建立後不再變動。</dd>
                             <dt>防錯規則（索引）</dt>
                             <dd>
                                 <div class="idx"><b>Key0</b> 主鍵 (NotificationNo)<br><b>Key1</b> 不重複
-                                    (NotificationId)<br><b>Key2</b> 不重複 (SystemCode, RequestId)，限介接系統建立<br><b>Key3</b>
-                                    查詢用 (Status, ScheduledTime)：找出到期的排程</div>
+                                    (NotificationId)<br><b>Key2</b> 不重複 (SystemCode, RequestId)，介接系統與後台共用，套用所有通知<br><b>Key3</b>
+                                    查詢用 (Status, ScheduledTime)：找出到期的排程<br><b>Key4</b> 查詢用 (HookStatus, HookNextTime)：找出待送的「通知未發送」事件</div>
                             </dd>
                         </dl>
                     </div>
@@ -1728,7 +1763,7 @@ create unique index TeamsReplyKey2 on TeamsReply (DeliveryNo, ReplierEmpNo);</pr
                             <tr>
                                 <td>FailureReason</td>
                                 <td class="t">tinyint</td>
-                                <td>找不到員工／未安裝 App／Teams 拒絕／結果不明</td>
+                                <td>找不到員工（含排程期間離職）／未安裝 App／Teams 拒絕／結果不明</td>
                             </tr>
                             <tr>
                                 <td>ConversationId</td>
@@ -1784,19 +1819,24 @@ create unique index TeamsReplyKey2 on TeamsReply (DeliveryNo, ReplierEmpNo);</pr
                                 <td>單一回覆何時關閉</td>
                             </tr>
                             <tr>
+                                <td>CardStatus</td>
+                                <td class="t">tinyint</td>
+                                <td>0 無／1 待更新／2 完成／3 放棄；以「待更新」認領，放棄時後台顯示「卡片更新失敗」</td>
+                            </tr>
+                            <tr>
                                 <td>CardRequestedTime</td>
                                 <td class="t">datetime</td>
-                                <td>最近一次要求更新卡片</td>
+                                <td>最近一次要求更新卡片；完成時用來判斷認領後是否又有新要求</td>
                             </tr>
                             <tr>
                                 <td>CardUpdatedTime</td>
                                 <td class="t">datetime</td>
-                                <td>最近一次完成更新；較舊就代表要更新</td>
+                                <td>最近一次完成更新</td>
                             </tr>
                             <tr>
                                 <td>CardAttemptCount</td>
                                 <td class="t">tinyint</td>
-                                <td>更新重試次數</td>
+                                <td>更新重試次數（最多 5 次）；有新回覆時重新計次</td>
                             </tr>
                             <tr class="grp">
                                 <td colspan="3">送達結果送回原系統</td>
@@ -1857,9 +1897,11 @@ create unique index TeamsReplyKey2 on TeamsReply (DeliveryNo, ReplierEmpNo);</pr
                     <div>
                         <dl>
                             <dt>什麼時候寫入</dt>
-                            <dd>建立通知（指定員工）或開始發送（全部在職員工）時新增；投遞、有人回覆、卡片更新、送回原系統時更新。</dd>
+                            <dd>建立通知（指定員工）或開始發送（全部在職員工）時新增；投遞、有人回覆、卡片更新、送回原系統時更新。開始發送時重新檢查指定員工是否在職，已離職者記為失敗「找不到員工」，其他人照常發送。</dd>
                             <dt>設計重點</dt>
                             <dd>一列同時承載四件事：<b>送達結果、回覆彙總、卡片更新、送達結果送回</b>。逐次重試明細不存資料庫，只記次數與最後一次結果。</dd>
+                            <dt>卡片更新何時放棄</dt>
+                            <dd>完成時只有在認領後沒有新的更新要求（CardRequestedTime 未變新）才設為完成，否則維持待更新。Teams 忙碌（429、503）或逾時最多重試 5 次後放棄；找不到訊息、無權限等不可重試的錯誤立即放棄。之後有新回覆時設回待更新並重新計次。放棄不影響回覆。</dd>
                             <dt>為什麼頻道也是一列</dt>
                             <dd>「單一回覆」要每個頻道各自計算，第一位回覆是以這一列為單位判斷。</dd>
                             <dt>防錯規則（索引）</dt>
@@ -1867,7 +1909,7 @@ create unique index TeamsReplyKey2 on TeamsReply (DeliveryNo, ReplierEmpNo);</pr
                                 <div class="idx"><b>Key0</b> 主鍵 (DeliveryNo)<br><b>Key1</b> 不重複
                                     (DeliveryId)<br><b>Key2</b> 不重複 (NotificationNo, EmpNo,
                                     ChannelCode)：同一人／頻道只收一次<br><b>Key3</b> 查詢用 (Status, NextAttemptTime)<br><b>Key4</b>
-                                    查詢用 (HookStatus, HookNextTime)<br>檢查規則：員工與頻道恰好擇一</div>
+                                    查詢用 (HookStatus, HookNextTime)<br><b>Key5</b> 查詢用 (CardStatus, CardLeaseUntil)：找出待更新的卡片<br>檢查規則：員工與頻道恰好擇一</div>
                             </dd>
                         </dl>
                     </div>
@@ -2059,12 +2101,12 @@ create unique index TeamsReplyKey2 on TeamsReply (DeliveryNo, ReplierEmpNo);</pr
                             <tr>
                                 <td>ConversationId</td>
                                 <td class="t">varchar(300)</td>
-                                <td>與 App 的個人對話；未建立為空白</td>
+                                <td>與 App 的個人對話；未建立為空白（頻道點擊反查新增的也是空白）</td>
                             </tr>
                             <tr>
                                 <td>ServiceUrl</td>
                                 <td class="t">varchar(300)</td>
-                                <td>Teams 服務位址</td>
+                                <td>Teams 服務位址（個人對話用；頻道的存在平台設定）</td>
                             </tr>
                             <tr class="grp">
                                 <td colspan="3">稽核欄位</td>
@@ -2084,7 +2126,9 @@ create unique index TeamsReplyKey2 on TeamsReply (DeliveryNo, ReplierEmpNo);</pr
                     <div>
                         <dl>
                             <dt>什麼時候寫入</dt>
-                            <dd>第一次要發給該員工時查 Microsoft 帳號目錄後新增；第一次建立個人對話時補上對話位置。</dd>
+                            <dd>第一次要發給該員工時查 Microsoft 帳號目錄後新增；第一次建立個人對話時補上對話位置。頻道成員按按鈕、依 AadObjectId 查不到時，由主程式以 Graph 依 Object ID 取得公司帳號（須精確等於 <code>csh{員工代碼}@csh.org.tw</code>），資料服務對到在職員工編號後新增，此時對話位置留空；Graph 失敗只回應點擊者「暫時無法確認身分，請稍後再試」，不保存回覆。</dd>
+                            <dt>再到職</dt>
+                            <dd>院內再到職會取得新的員工編號與新帳號，Object ID 不同，不會衝突；若仍遇到同一 Object ID 對到兩個員工編號，沿用「身分關聯衝突」規則禁送。</dd>
                             <dt>為什麼需要這張表</dt>
                             <dd>它是查詢結果的快取。沒有它，每次發送都要即時查 Microsoft、每次按按鈕都要即時反查員工；全院通知一次就是數千次外部呼叫，容易被限流、變慢。</dd>
                             <dt>防錯規則（索引）</dt>
@@ -2246,6 +2290,58 @@ file = 請假單.pdf
 --   引用別的系統上傳或已附加到其他通知的附件</s></pre>
                     </div>
                 </div>
+            </div>
+
+            <!-- 2026-10-27 決定 -->
+            <div class="fmt">
+                <h4>2026-10-27 決定</h4>
+                <p>補齊頻道回覆者身分、整則未發送、卡片更新放棄與內網防護等細節（ADR 0008、0009）。</p>
+                <table class="rule">
+                    <tr>
+                        <th style="width:18%">項目</th>
+                        <th>決定</th>
+                    </tr>
+                    <tr>
+                        <td>頻道回覆者身分</td>
+                        <td>點擊時先以 Object ID 查 TeamsEmployee，查不到由主程式以 Graph 取得公司帳號（須精確等於 <code>csh{員工代碼}@csh.org.tw</code>），資料服務對到在職員工後寫入；Graph 失敗只回應點擊者「暫時無法確認身分，請稍後再試」（ADR 0009）。</td>
+                    </tr>
+                    <tr>
+                        <td>再到職</td>
+                        <td>再到職會取得新員工編號與新帳號，Object ID 不同不衝突；若仍遇到同一 Object ID 對到兩個員工編號，沿用「身分關聯衝突」禁送。</td>
+                    </tr>
+                    <tr>
+                        <td>頻道 serviceUrl</td>
+                        <td>存在 TeamsSetting 可發佈頻道那一列的 Content，新增時預先帶入院內租戶的值（主程式設定檔），「頻道測試核准」時驗證。</td>
+                    </tr>
+                    <tr>
+                        <td>整則未發送</td>
+                        <td>TeamsNotification 記錄失敗原因並送交第三種事件「通知未發送」（事件編號＝NotificationId），後台建立的通知仍不送（ADR 0008）。</td>
+                    </tr>
+                    <tr>
+                        <td>卡片更新放棄</td>
+                        <td>TeamsDelivery 加 CardStatus；429、503、逾時最多重試 5 次、不可重試的錯誤立即放棄，有新回覆時重新計次，後台顯示「卡片更新失敗」。</td>
+                    </tr>
+                    <tr>
+                        <td>後台白名單與上限</td>
+                        <td>平台管理者白名單與後台人數上限都放主程式設定檔，修改需重新部署。</td>
+                    </tr>
+                    <tr>
+                        <td>後台防重複</td>
+                        <td>後台表單開啟時產生一次性請求編號，與通知 API 共用 (SystemCode, RequestId) 不重複索引，套用所有通知。</td>
+                    </tr>
+                    <tr>
+                        <td>排程期間離職</td>
+                        <td>開始發送時重新檢查指定員工是否在職，已離職者記為失敗「找不到員工」，其他人照常發送。</td>
+                    </tr>
+                    <tr>
+                        <td>時間判斷</td>
+                        <td>所有認領期限與到期判斷都在資料服務以它的時間計算，主程式不自己算。</td>
+                    </tr>
+                    <tr>
+                        <td>內網防護</td>
+                        <td>主程式除 Bot 訊息端點外，其他路徑只接受設定檔列出的內網網段，與 WAF 並存。</td>
+                    </tr>
+                </table>
             </div>
 
             <!-- 附件前置作業 -->
