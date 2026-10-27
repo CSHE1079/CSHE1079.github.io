@@ -516,7 +516,7 @@
         /* 資料概覽 */
         .data {
             display: grid;
-            grid-template-columns: repeat(5, 1fr);
+            grid-template-columns: repeat(3, 1fr);
             gap: 12px
         }
 
@@ -971,7 +971,7 @@
         <header class="hero">
             <div>
                 <h1><small>CSH TEAMS 通知平台</small>系統架構與資料表</h1>
-                <div class="meta">2026-10-20　｜　<b>主管討論用</b>　｜　系統全貌、通知流程、使用情境、資料表設計</div>
+                <div class="meta">2026-10-20（2026-10-22 補附件）　｜　<b>主管討論用</b>　｜　系統全貌、通知流程、使用情境、資料表設計</div>
                 <nav class="toc" aria-label="目錄">
                     <a href="#s1"><b>01</b>系統架構</a>
                     <a href="#s2"><b>02</b>通知旅程</a>
@@ -990,16 +990,16 @@
             <p class="cap">分成三區：Microsoft 雲端、院內防火牆、院內網路。<b>對外只開一個入口</b>（Teams 按鈕回傳），通知
                 API、操作後台、資料服務都只在內網。<b>主程式不直接連資料庫</b>，所有讀寫都經資料服務（SrvApi），每個動作一次完成、不會做一半。</p>
 
-            <svg class="dia" viewBox="0 0 1120 620" role="img" aria-labelledby="d1t">
+            <svg class="dia" viewBox="0 0 1120 660" role="img" aria-labelledby="d1t">
                 <title id="d1t">通知平台系統架構：Microsoft 雲端、院內防火牆、院內網路三區</title>
-                <rect x="16" y="40" width="250" height="560" fill="#e8ebfa" stroke="#c9cdf0" />
+                <rect x="16" y="40" width="250" height="600" fill="#e8ebfa" stroke="#c9cdf0" />
                 <text x="141" y="70" text-anchor="middle" class="zl" fill="#5b5fc7">Microsoft 雲端</text>
-                <rect x="288" y="40" width="48" height="560" fill="#fde7e5" stroke="#c3352b" stroke-dasharray="6 4" />
+                <rect x="288" y="40" width="48" height="600" fill="#fde7e5" stroke="#c3352b" stroke-dasharray="6 4" />
                 <text x="312" y="70" text-anchor="middle" class="zl" fill="#c3352b"
                     style="letter-spacing:.05em">WAF</text>
                 <text x="312" y="500" text-anchor="middle" fill="#c3352b" font-size="13"
                     style="writing-mode:vertical-rl">只開放 Teams 按鈕回傳</text>
-                <rect x="356" y="40" width="748" height="560" fill="#dfece9" stroke="#b9d3ce" />
+                <rect x="356" y="40" width="748" height="600" fill="#dfece9" stroke="#b9d3ce" />
                 <text x="730" y="70" text-anchor="middle" class="zl" fill="#0d5c57">院內網路（內網）</text>
 
                 <rect x="40" y="96" width="200" height="64" class="box" />
@@ -1015,6 +1015,10 @@
                 <text x="140" y="466" text-anchor="middle" class="tt">Microsoft 帳號目錄</text>
                 <text x="140" y="487" text-anchor="middle" class="ts">用員工代碼找到 Teams 帳號</text>
 
+                <rect x="40" y="560" width="200" height="64" class="box" />
+                <text x="140" y="586" text-anchor="middle" class="tt">SharePoint</text>
+                <text x="140" y="607" text-anchor="middle" class="ts">平台專用文件庫・存放附件</text>
+
                 <rect x="380" y="86" width="360" height="324" class="box core" />
                 <text x="560" y="110" text-anchor="middle" class="tt core-t">通知平台主程式（WebApi）</text>
                 <rect x="400" y="122" width="320" height="62" class="sub" />
@@ -1026,7 +1030,7 @@
                 <text x="560" y="261" text-anchor="middle" class="ts">更新卡片・把回覆送回原系統</text>
                 <rect x="400" y="298" width="152" height="94" class="sub" />
                 <text x="476" y="326" text-anchor="middle" class="tt" font-size="14">通知 API</text>
-                <text x="476" y="347" text-anchor="middle" class="ts">建立・取消・查詢</text>
+                <text x="476" y="347" text-anchor="middle" class="ts">建立・取消・查詢・附件</text>
                 <text x="476" y="365" text-anchor="middle" class="ts">需金鑰（API Key）</text>
                 <rect x="568" y="298" width="152" height="94" class="sub" />
                 <text x="644" y="326" text-anchor="middle" class="tt" font-size="14">操作後台</text>
@@ -1042,7 +1046,7 @@
 
                 <rect x="800" y="300" width="280" height="130" class="box" />
                 <text x="940" y="328" text-anchor="middle" class="tt">HealthCare 資料庫</text>
-                <text x="940" y="354" text-anchor="middle" class="ts">新增 5 張 Teams 資料表</text>
+                <text x="940" y="354" text-anchor="middle" class="ts">新增 6 張 Teams 資料表</text>
                 <text x="940" y="374" text-anchor="middle" class="ts">員工、單位主檔只讀取不修改</text>
                 <text x="940" y="394" text-anchor="middle" class="ts">最小權限資料庫帳號</text>
                 <text x="940" y="414" text-anchor="middle" class="ts">DBA 執行建表與結構異動</text>
@@ -1070,6 +1074,8 @@
                 <path d="M644,478 L644,394" class="ln" marker-end="url(#ah)" />
                 <path d="M740,180 L798,180" class="ln" marker-end="url(#ah)" />
                 <path d="M940,250 L940,298" class="ln" marker-end="url(#ah)" />
+                <path d="M800,236 L770,236 L770,600 L242,600" class="ln out" marker-end="url(#ah-teams)" />
+                <text x="563" y="592" text-anchor="middle" class="lbl">Graph：上傳附件・授與檢視權限（Sites.Selected）</text>
 
                 <g class="badge">
                     <circle cx="140" cy="205" r="11" /><text x="140" y="205">1</text>
@@ -1098,6 +1104,9 @@
                 <g class="badge">
                     <circle cx="940" cy="274" r="11" /><text x="940" y="274">9</text>
                 </g>
+                <g class="badge">
+                    <circle cx="312" cy="600" r="11" /><text x="312" y="600">10</text>
+                </g>
             </svg>
 
             <div class="linekey">
@@ -1110,17 +1119,18 @@
                 <li><i>2</i><span>Teams 把按鈕點擊送進來，平台先驗證確實來自 Microsoft。<b>這是唯一對外入口。</b></span></li>
                 <li><i>3</i><span>平台主動把卡片送到個人對話或頻道，並在有人回覆後更新原卡片。</span></li>
                 <li><i>4</i><span>用員工代碼推出公司帳號（<code>csh{員工代碼}@csh.org.tw</code>），查出對應的 Teams 帳號。</span></li>
-                <li><i>5</i><span>介接系統帶金鑰呼叫通知 API：建立（可指定發送時間）、取消尚未開始的通知、查詢結果。</span></li>
+                <li><i>5</i><span>介接系統帶金鑰呼叫通知 API：建立（可指定發送時間）、取消尚未開始的通知、查詢結果；有附件時先以 <code>POST /attachments</code> 上傳取得附件編號，建立通知時帶 <code>attachmentIds[]</code>。</span></li>
                 <li><i>6</i><span>回覆與送達結果附防偽簽章送回介接系統；暫時送不到會依間隔自動重送。</span></li>
                 <li><i>7</i><span>平台管理者維護設定，也能在後台做介接系統能做的事：發通知、排程、修改或取消、查看回覆。</span></li>
                 <li><i>8</i><span>主程式透過內網呼叫資料服務，呼叫要帶金鑰；金鑰放在密鑰存放處，不寫在設定檔。</span></li>
                 <li><i>9</i><span>防重複、搶第一位回覆等判斷，都在資料服務的單一交易與資料庫規則內完成。</span></li>
+                <li><i>10</i><span>資料服務經 Microsoft Graph 把附件上傳到平台專用的 SharePoint 文件庫，開始發送時依收件者授與檢視權限。App 只申請 <code>Sites.Selected</code>，只授權這一個網站（角色 <code>fullcontrol</code>）。</span></li>
             </ul>
 
             <div class="callouts">
                 <div class="callout"><b>對外只開一扇門</b>只有 Teams 的按鈕回傳能從外部進來；通知 API、後台、資料服務都只在內網。</div>
                 <div class="callout"><b>資料統一由資料服務處理</b>主程式不直接連資料庫，與院內其他系統（例如文件辨識系統）的分層方式相同，方便維運與稽核。</div>
-                <div class="callout"><b>資料放在院內標準資料庫</b>使用院內建表格式，建表與結構異動由 DBA 執行。員工與單位資料直接讀取院內主檔，不另外複製。</div>
+                <div class="callout"><b>資料放在院內標準資料庫</b>使用院內建表格式，建表與結構異動由 DBA 執行。員工與單位資料直接讀取院內主檔，不另外複製。附件檔案本體存在平台專用 SharePoint，資料庫只存檔名、大小等資訊。</div>
             </div>
         </section>
 
@@ -1132,9 +1142,9 @@
             <div class="journey">
                 <div class="st">
                     <h4>建立</h4>
-                    <p>介接系統指定對象、標題、內容與回覆選項，呼叫通知 API。平台檢查是否在授權範圍內、選項格式是否正確；重送同一請求不會建第二則。</p>
+                    <p>介接系統指定對象、標題、內容與回覆選項（有附件時先上傳、再帶入附件編號），呼叫通知 API。平台檢查是否在授權範圍內、選項格式是否正確、附件是否為自己上傳；重送同一請求不會建第二則。</p>
                     <div class="eg">簽核系統：通知王主任「請核准請假單」</div>
-                    <div class="tb-used">TeamsNotification・TeamsDelivery</div>
+                    <div class="tb-used">TeamsNotification・TeamsDelivery・TeamsAttachment</div>
                 </div>
                 <div class="st">
                     <h4>等待排程</h4>
@@ -1144,7 +1154,7 @@
                 </div>
                 <div class="st">
                     <h4>找人並發送</h4>
-                    <p>用員工代碼找到 Teams 帳號，把卡片送到個人對話或頻道；每位收件者分別記錄成功或失敗。</p>
+                    <p>用員工代碼找到 Teams 帳號；有附件時先授與檢視權限，再把卡片送到個人對話或頻道；每位收件者分別記錄成功或失敗。</p>
                     <div class="eg">王主任的 Teams 跳出卡片</div>
                     <div class="tb-used">TeamsEmployee・TeamsDelivery</div>
                 </div>
@@ -1185,7 +1195,7 @@
                 <tbody>
                     <tr>
                         <td>私人通知</td>
-                        <td>在自己與 App 的個人對話收到卡片，只有本人看得到；可開啟文件連結。</td>
+                        <td>在自己與 App 的個人對話收到卡片，只有本人看得到；可開啟文件連結與附件。</td>
                         <td>每位收件者各自記錄送達結果，一人失敗不影響其他人。</td>
                     </tr>
                     <tr>
@@ -1202,6 +1212,11 @@
                         <td>頻道通知・每人一次</td>
                         <td>卡片保持開放並顯示「已有 N 人回覆」；自己按下時看到「您已回覆」，不會在頻道裡洗版。</td>
                         <td>每人只算一次，人數自動累加。</td>
+                    </tr>
+                    <tr>
+                        <td>附件</td>
+                        <td>卡片上每個附件一顆「開啟附件：檔名」，第一張圖片另附縮圖；在 Teams 內可直接預覽，手機與院外以 M365 登入開啟。</td>
+                        <td>檔案存在平台專用 SharePoint；開始發送時才依收件者授與檢視權限，授權失敗則該對象不發卡片並標示失敗。</td>
                     </tr>
                     <tr>
                         <td>排程發送</td>
@@ -1226,7 +1241,7 @@
         <section class="plate" id="s4">
             <span class="fig">四</span>
             <h2>資料怎麼存</h2>
-            <p class="cap">新增 <b>5 張資料表</b>，全部放在 HealthCare 資料庫。主線只有三層：<b>一則通知 → 發給誰 → 誰回了什麼</b>；另有平台設定與員工 Teams 身分各一張。
+            <p class="cap">新增 <b>6 張資料表</b>（由 18 張精簡為 5 張，2026-10-22 為附件新增 1 張，共 6 張），全部放在 HealthCare 資料庫。主線只有三層：<b>一則通知 → 發給誰 → 誰回了什麼</b>；另有平台設定、員工 Teams 身分與附件各一張。
             </p>
             <div class="flowline"><span>通知</span><i>一則通知發給多個對象 →</i><span>投遞紀錄</span><i>每個對象可收到回覆 →</i><span>回覆紀錄</span>
             </div>
@@ -1271,11 +1286,21 @@
                     </div>
                     <div class="like">像「通訊錄」：這位員工在 Teams 的地址。</div>
                 </div>
+                <div class="dt">
+                    <h4>附件<small>TeamsAttachment</small></h4>
+                    <div class="body">
+                        <p>每個上傳的檔案一筆：檔名、大小、類型、在 SharePoint 的位置、圖片縮圖，以及屬於哪則通知。</p>
+                        <p>檔案本體存在平台專用 SharePoint 文件庫，資料庫只存這些資訊。</p>
+                    </div>
+                    <div class="like">像「附件清單」：這則通知夾了哪些檔案、放在哪裡。</div>
+                </div>
             </div>
 
             <h3>表與表的關係</h3>
             <svg class="dia" viewBox="0 0 1120 410" role="img" aria-labelledby="d4t">
-                <title id="d4t">5 張 Teams 資料表關聯</title>
+                <title id="d4t">6 張 Teams 資料表關聯</title>
+                <path d="M260,270 L400,270 L400,132" class="ln fk" marker-end="url(#ah-fk)" />
+                <path d="M160,240 L160,198" class="ln logic" marker-end="url(#ah-logic)" />
                 <path d="M620,100 L562,100" class="ln fk" marker-end="url(#ah-fk)" />
                 <path d="M880,100 L822,100" class="ln fk" marker-end="url(#ah-fk)" />
                 <path d="M360,100 L282,100" class="ln logic" marker-end="url(#ah-logic)" />
@@ -1293,6 +1318,8 @@
                 <text x="728" y="315" class="lbl">員工編號</text>
                 <text x="468" y="240" class="lbl">發文單位</text>
                 <text x="988" y="250" class="lbl">回覆者</text>
+                <text x="330" y="262" text-anchor="middle" class="lbl">FK・0..N</text>
+                <text x="168" y="224" class="lbl">系統代碼</text>
 
                 <rect x="40" y="60" width="240" height="136" class="box" />
                 <text x="160" y="88" text-anchor="middle" class="mono">TeamsSetting</text>
@@ -1315,6 +1342,10 @@
                 <rect x="620" y="220" width="200" height="60" class="box" />
                 <text x="720" y="246" text-anchor="middle" class="mono">TeamsEmployee</text>
                 <text x="720" y="266" text-anchor="middle" class="ts">員工 Teams 身分</text>
+
+                <rect x="60" y="240" width="200" height="60" class="box" />
+                <text x="160" y="266" text-anchor="middle" class="mono">TeamsAttachment</text>
+                <text x="160" y="286" text-anchor="middle" class="ts">附件（檔案在 SharePoint）</text>
 
                 <rect x="360" y="340" width="200" height="50" class="box ext" />
                 <text x="460" y="362" text-anchor="middle" class="mono">dbo.Depart</text>
@@ -1345,8 +1376,9 @@
                         </li>
                         <li>會給外部看到的識別碼另存 GUID，不讓外人猜到流水號。</li>
                         <li>時間一律存台灣時間；「還沒發生」存 <code>2999/12/31</code>。</li>
-                        <li>每張表都有
-                            <code>CreateUser</code>・<code>CreateTime</code>・<code>UpdateUser</code>・<code>UpdateTime</code>。後台操作填平台管理者的員工編號；系統自動處理填
+                        <li>交易類資料表都有
+                            <code>CreateUser</code>・<code>CreateTime</code>・<code>UpdateUser</code>・<code>UpdateTime</code>；設定類（平台設定）只有
+                            <code>UpdateUser</code>・<code>UpdateTime</code>。後台操作填平台管理者的員工編號；系統自動處理填
                             <code>0</code>，來源介接系統記在通知上。
                         </li>
                         <li>以資料庫權限保護，不另外加密；介接系統金鑰只存無法還原的雜湊。</li>
@@ -1407,6 +1439,19 @@ create unique index TeamsReplyKey2 on TeamsReply (DeliveryNo, ReplierEmpNo);</pr
                                 <td>Content</td>
                                 <td class="t">nvarchar(max)</td>
                                 <td>各類型專屬內容（JSON），由資料服務解析檢查</td>
+                            </tr>
+                            <tr class="grp">
+                                <td colspan="3">稽核欄位（設定類只記最後修改）</td>
+                            </tr>
+                            <tr>
+                                <td>UpdateUser</td>
+                                <td class="t">int</td>
+                                <td>最後修改的平台管理者員工編號</td>
+                            </tr>
+                            <tr>
+                                <td>UpdateTime</td>
+                                <td class="t">datetime</td>
+                                <td>最後修改時間（台灣時間）</td>
                             </tr>
                         </table>
                     </div>
@@ -1507,7 +1552,7 @@ create unique index TeamsReplyKey2 on TeamsReply (DeliveryNo, ReplierEmpNo);</pr
                             <tr>
                                 <td>LinkUrl</td>
                                 <td class="t">varchar(1000)</td>
-                                <td>文件連結，只接受 HTTPS</td>
+                                <td>文件連結（既有公司文件服務的網址），只接受 HTTPS；附件另存 TeamsAttachment</td>
                             </tr>
                             <tr class="grp">
                                 <td colspan="3">排程與狀態</td>
@@ -1531,6 +1576,19 @@ create unique index TeamsReplyKey2 on TeamsReply (DeliveryNo, ReplierEmpNo);</pr
                                 <td>LeaseUntil</td>
                                 <td class="t">datetime</td>
                                 <td>排程認領期限，避免兩台主機同時處理</td>
+                            </tr>
+                            <tr class="grp">
+                                <td colspan="3">稽核欄位</td>
+                            </tr>
+                            <tr>
+                                <td>CreateUser・UpdateUser</td>
+                                <td class="t">int</td>
+                                <td>建立者／最後修改者員工編號；介接系統與系統自動處理填 0</td>
+                            </tr>
+                            <tr>
+                                <td>CreateTime・UpdateTime</td>
+                                <td class="t">datetime</td>
+                                <td>建立／最後修改時間（台灣時間）</td>
                             </tr>
                         </table>
                     </div>
@@ -1781,6 +1839,19 @@ create unique index TeamsReplyKey2 on TeamsReply (DeliveryNo, ReplierEmpNo);</pr
                                 <td class="t">datetime</td>
                                 <td>送回原系統</td>
                             </tr>
+                            <tr class="grp">
+                                <td colspan="3">稽核欄位</td>
+                            </tr>
+                            <tr>
+                                <td>CreateUser・UpdateUser</td>
+                                <td class="t">int</td>
+                                <td>建立者／最後修改者員工編號；系統自動處理填 0</td>
+                            </tr>
+                            <tr>
+                                <td>CreateTime・UpdateTime</td>
+                                <td class="t">datetime</td>
+                                <td>建立／最後修改時間（台灣時間）</td>
+                            </tr>
                         </table>
                     </div>
                     <div>
@@ -1911,6 +1982,19 @@ create unique index TeamsReplyKey2 on TeamsReply (DeliveryNo, ReplierEmpNo);</pr
                                 <td class="t">datetime</td>
                                 <td>送出作業認領期限</td>
                             </tr>
+                            <tr class="grp">
+                                <td colspan="3">稽核欄位</td>
+                            </tr>
+                            <tr>
+                                <td>CreateUser・UpdateUser</td>
+                                <td class="t">int</td>
+                                <td>建立者／最後修改者員工編號；系統自動處理填 0</td>
+                            </tr>
+                            <tr>
+                                <td>CreateTime・UpdateTime</td>
+                                <td class="t">datetime</td>
+                                <td>建立（即回覆時間）／最後修改時間（台灣時間）</td>
+                            </tr>
                         </table>
                     </div>
                     <div>
@@ -1982,6 +2066,19 @@ create unique index TeamsReplyKey2 on TeamsReply (DeliveryNo, ReplierEmpNo);</pr
                                 <td class="t">varchar(300)</td>
                                 <td>Teams 服務位址</td>
                             </tr>
+                            <tr class="grp">
+                                <td colspan="3">稽核欄位</td>
+                            </tr>
+                            <tr>
+                                <td>CreateUser・UpdateUser</td>
+                                <td class="t">int</td>
+                                <td>建立者／最後修改者員工編號；系統自動處理填 0</td>
+                            </tr>
+                            <tr>
+                                <td>CreateTime・UpdateTime</td>
+                                <td class="t">datetime</td>
+                                <td>建立／最後修改時間（台灣時間）</td>
+                            </tr>
                         </table>
                     </div>
                     <div>
@@ -1997,6 +2094,190 @@ create unique index TeamsReplyKey2 on TeamsReply (DeliveryNo, ReplierEmpNo);</pr
                         </dl>
                     </div>
                 </div>
+            </div>
+
+            <!-- TeamsAttachment -->
+            <div class="tb cfg">
+                <header><b>附件</b><code>TeamsAttachment</code><span>一列＝一個上傳的檔案・一則通知 0..N 個</span></header>
+                <div class="bd">
+                    <div>
+                        <table class="fld">
+                            <tr>
+                                <td>AttachmentNo<span class="k pk">PK</span></td>
+                                <td class="t">int identity</td>
+                                <td>主鍵</td>
+                            </tr>
+                            <tr class="grp">
+                                <td colspan="3">誰上傳、屬於哪則通知</td>
+                            </tr>
+                            <tr>
+                                <td>AttachmentId</td>
+                                <td class="t">uniqueidentifier</td>
+                                <td>對外附件編號，即 API 的 <code>attachmentId</code></td>
+                            </tr>
+                            <tr>
+                                <td>SystemCode</td>
+                                <td class="t">varchar(30)</td>
+                                <td>上傳的介接系統；後台上傳為空白</td>
+                            </tr>
+                            <tr>
+                                <td>NotificationNo<span class="k fk">FK</span></td>
+                                <td class="t">int NULL</td>
+                                <td>屬於哪則通知；上傳後尚未被通知引用時為空</td>
+                            </tr>
+                            <tr class="grp">
+                                <td colspan="3">檔案資訊（檔案本體在 SharePoint）</td>
+                            </tr>
+                            <tr>
+                                <td>FileName</td>
+                                <td class="t">nvarchar(200)</td>
+                                <td>檔名；卡片按鈕顯示「開啟附件：檔名」</td>
+                            </tr>
+                            <tr>
+                                <td>FileSize</td>
+                                <td class="t">int</td>
+                                <td>檔案大小（位元組）</td>
+                            </tr>
+                            <tr>
+                                <td>ContentType</td>
+                                <td class="t">varchar(100)</td>
+                                <td>檔案類型（MIME），須在白名單內</td>
+                            </tr>
+                            <tr>
+                                <td>SharePointItemId</td>
+                                <td class="t">varchar(100)</td>
+                                <td>檔案在平台專用文件庫的項目編號；授權與產生開啟連結用</td>
+                            </tr>
+                            <tr>
+                                <td>Thumbnail</td>
+                                <td class="t">varchar(max) NULL</td>
+                                <td>圖片縮圖（Base64），放進卡片預覽；非圖片為空</td>
+                            </tr>
+                            <tr class="grp">
+                                <td colspan="3">稽核欄位</td>
+                            </tr>
+                            <tr>
+                                <td>CreateUser・UpdateUser</td>
+                                <td class="t">int</td>
+                                <td>建立者／最後修改者員工編號；介接系統上傳填 0</td>
+                            </tr>
+                            <tr>
+                                <td>CreateTime・UpdateTime</td>
+                                <td class="t">datetime</td>
+                                <td>CreateTime 即上傳時間，日後訂保存期限以此判斷；UpdateTime 在被通知引用時更新</td>
+                            </tr>
+                        </table>
+                    </div>
+                    <div>
+                        <dl>
+                            <dt>什麼時候寫入</dt>
+                            <dd>介接系統呼叫 <code>POST /attachments</code> 或平台管理者在後台上傳時新增，此時不屬於任何通知；建立通知帶入 <code>attachmentIds[]</code> 時填上 NotificationNo。</dd>
+                            <dt>「文件連結」與「附件」不同</dt>
+                            <dd>文件連結（TeamsNotification.LinkUrl）指向既有公司文件服務的網址，平台不保存檔案；附件是平台代管在 SharePoint 的檔案，由平台控管誰能開啟。兩者可以並存。</dd>
+                            <dt>防錯規則（索引）</dt>
+                            <dd>
+                                <div class="idx"><b>Key0</b> 主鍵 (AttachmentNo)<br><b>Key1</b> 不重複
+                                    (AttachmentId)<br><b>Key2</b> 查詢用 (NotificationNo)：產生卡片時找出該則的附件<br>外鍵：NotificationNo → TeamsNotification，可為空<br>只能引用自己上傳、尚未附加到其他通知的附件（資料服務檢查）</div>
+                            </dd>
+                        </dl>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 附件規則 -->
+            <div class="fmt">
+                <h4>附件的決定（2026-10-22）</h4>
+                <p>採平台代管、存於 SharePoint（ADR 0007），推翻「平台不儲存文件、只提供文件連結」的定義。</p>
+                <div class="fmt-grid">
+                    <div>
+                        <table class="rule">
+                            <tr>
+                                <th style="width:18%">項目</th>
+                                <th>決定</th>
+                            </tr>
+                            <tr>
+                                <td>API</td>
+                                <td>分兩步：先 <code>POST /attachments</code>（multipart，單一檔案）取得 <code>attachmentId</code>；建立通知時帶 <code>attachmentIds[]</code>。建立通知仍是一般 JSON，<code>requestId</code> 冪等不受影響；大檔不拖慢建立通知的交易。</td>
+                            </tr>
+                            <tr>
+                                <td>儲存</td>
+                                <td>資料服務經 Microsoft Graph 上傳到平台專用的 SharePoint 文件庫。App 註冊只申請 <code>Sites.Selected</code>，只授權這一個網站，網站角色為 <code>fullcontrol</code>（管理檔案共用權限需要，write 不夠）。資料庫只存中繼資料。</td>
+                            </tr>
+                            <tr>
+                                <td>檢查</td>
+                                <td>副檔名與 MIME 白名單（例如 pdf、jpg、png、docx）；單檔大小、每則通知總大小、檔案數上限（平台設定，預設值待定）；掃毒交由 SharePoint 內建防護；介接系統只能引用自己上傳、尚未附加到其他通知的附件。</td>
+                            </tr>
+                            <tr>
+                                <td>授權</td>
+                                <td>開始發送時依收件者授與檢視權限：私人通知授權給收件員工；頻道通知授權給該團隊成員或使用「組織內可檢視」連結；「全部在職員工」改用組織內可檢視連結（逐人授權會產生數千筆權限）。授權失敗則該對象不發卡片並標示失敗。</td>
+                            </tr>
+                            <tr>
+                                <td>卡片</td>
+                                <td>依序：「通知」標籤、發文單位、標題、本文、圖片縮圖（選配）、「開啟文件」（選配，即文件連結）、每個附件一顆「開啟附件：檔名」（連到 SharePoint；Teams 可直接預覽，手機與院外以 M365 登入開啟）、選項按鈕。縮圖只為第一張圖片產生：PNG／JPEG、≤ 1024×1024、≤ 1 MB，以 Base64 內嵌。</td>
+                            </tr>
+                            <tr>
+                                <td>病人資料</td>
+                                <td>通知內容（標題、本文、選項、附件）可否含病人資料、可否存放在 M365，由介接系統依院內病安與資安規範自行負責，平台不檢查。</td>
+                            </tr>
+                            <tr>
+                                <td>保存期限</td>
+                                <td>先不設限，不做到期刪除。</td>
+                            </tr>
+                        </table>
+                    </div>
+                    <div>
+                        <pre class="jsonbox"><i>-- ① 上傳附件（multipart，單一檔案）</i>
+POST /attachments
+Content-Type: multipart/form-data
+file = 請假單.pdf
+
+<i>-- 回應</i>
+{ "attachmentId": "8f14e45f-ceea-467f-a0e6-1e3c2b9d7a01" }
+
+<i>-- ② 建立通知時引用（仍是一般 JSON）</i>
+{
+  "requestId": "SIGN-20261021-0001",
+  "empNos": [1234],
+  "title": "請核准請假單",
+  "attachmentIds": ["8f14e45f-ceea-467f-a0e6-1e3c2b9d7a01"]
+}
+
+<s>-- ✗ 會被拒絕：副檔名或 MIME 不在白名單、超過單檔／總大小或檔案數上限、
+--   引用別的系統上傳或已附加到其他通知的附件</s></pre>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 附件前置作業 -->
+            <div class="fmt">
+                <h4>附件的前置作業（待辦）</h4>
+                <p>需主管協調 M365 管理員開通；完成前無法在正式環境使用附件。</p>
+                <table class="rule">
+                    <tr>
+                        <th style="width:8%">步驟</th>
+                        <th>工作</th>
+                    </tr>
+                    <tr>
+                        <td>1</td>
+                        <td>建立平台專用的 SharePoint 網站與文件庫（建議用不帶 M365 群組的通訊網站，避免群組成員自動取得存取權）。</td>
+                    </tr>
+                    <tr>
+                        <td>2</td>
+                        <td>為資料服務（SrvApi）建立專用 App 註冊，申請 Graph 應用程式權限 <code>Sites.Selected</code>，由管理員同意。</td>
+                    </tr>
+                    <tr>
+                        <td>3</td>
+                        <td>由 SharePoint 管理員把該 App 授權到這個網站，角色為 <code>fullcontrol</code>（管理檔案共用權限需要，write 不夠）。</td>
+                    </tr>
+                    <tr>
+                        <td>4</td>
+                        <td>確認網站共用設定允許組織內共用與「組織內人員」連結。</td>
+                    </tr>
+                    <tr>
+                        <td>5</td>
+                        <td>以該 App 實測：上傳測試檔、對測試員工發 invite（不寄信、需登入、唯讀）、建立組織內唯讀連結。Graph 文件未列出 <code>Sites.Selected</code> 可用於這兩個動作，必須實測確認。</td>
+                    </tr>
+                </table>
             </div>
         </section>
 
